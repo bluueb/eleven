@@ -207,11 +207,12 @@ io.on("connection", (socket) => {
 
       const current = room.currentNumber
 
-      // Validate consecutive sequence
+      // Validate consecutive sequence — stop at 11 (self-elimination)
       for (let i = 0; i < numbers.length; i++) {
         if (typeof numbers[i] !== "number" || !Number.isInteger(numbers[i])) return
         if (numbers[i] !== current + i + 1) return
         if (numbers[i] > 11) return
+        if (numbers[i] === 11) break
       }
 
       const last = numbers[numbers.length - 1]
