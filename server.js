@@ -207,35 +207,25 @@ io.on("connection", (socket) => {
 
       const current = room.currentNumber
 
-      // Validate consecutive sequence — stop at 11 (self-elimination)
+      // Validate consecutive sequence — reject anything with 11
       for (let i = 0; i < numbers.length; i++) {
         if (typeof numbers[i] !== "number" || !Number.isInteger(numbers[i])) return
         if (numbers[i] !== current + i + 1) return
-        if (numbers[i] > 11) return
-        if (numbers[i] === 11) break
+        if (numbers[i] >= 11) return // 11 is never allowed to be said
       }
 
       const last = numbers[numbers.length - 1]
+      room.currentNumber = last
 
-      if (last >= 11) {
-        // Player said 11 — THEY get eliminated
-        console.log(`[${code}] ${socket.playerName} said 11 — self-eliminated`)
-        room.currentNumber = 0
-        // currentPlayerIndex is already pointing to this player, so eliminate them directly
+      if (last === 10) {
+        // Advance to next player and eliminate them — they would have to say 11
+        room.currentPlayerIndex = (room.currentPlayerIndex + 1) % room.players.length
+        console.log(`[${code}] ${socket.playerName} said 10 — ${room.players[room.currentPlayerIndex]} is forced out`)
         eliminateCurrentPlayer(code)
       } else {
-        room.currentNumber = last
-
-        if (last === 10) {
-          // Next player will be forced to say 11 — eliminate them now
-          room.currentPlayerIndex = (room.currentPlayerIndex + 1) % room.players.length
-          console.log(`[${code}] ${socket.playerName} said 10 — ${room.players[room.currentPlayerIndex]} is forced out`)
-          eliminateCurrentPlayer(code)
-        } else {
-          // Normal move — advance turn
-          room.currentPlayerIndex = (room.currentPlayerIndex + 1) % room.players.length
-          broadcast(code)
-        }
+        // Normal move — advance turn
+        room.currentPlayerIndex = (room.currentPlayerIndex + 1) % room.players.length
+        broadcast(code)
       }
     } catch (err) {
       console.error("move error:", err)
