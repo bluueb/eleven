@@ -1,62 +1,182 @@
 <!DOCTYPE html>
-<html lang="tr" class="dark">
+<html lang="tr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Eleven</title>
-<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://unpkg.com/7.css">
+<style>
+  body {
+    background: #1a3a5c url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4"><rect width="4" height="4" fill="%231a3a5c"/><rect width="1" height="1" fill="%23204a72" opacity="0.5"/></svg>');
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    font-family: 'Tahoma', 'Segoe UI', sans-serif;
+  }
+
+  .desktop-icon {
+    text-align: center;
+    margin-bottom: 20px;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+  }
+
+  .desktop-icon h1 {
+    font-size: 28px;
+    font-weight: bold;
+    letter-spacing: 6px;
+    margin: 0 0 2px;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(100,180,255,0.8), 1px 1px 3px rgba(0,0,0,0.9);
+  }
+
+  .desktop-icon p {
+    font-size: 11px;
+    color: rgba(255,255,255,0.75);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin: 0;
+  }
+
+  .main-layout {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .window {
+    min-width: 260px;
+  }
+
+  .window-body.has-space {
+    padding: 12px;
+  }
+
+  .or-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 11px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+    padding: 8px;
+    align-self: center;
+  }
+
+  .field-row-stacked {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 10px;
+  }
+
+  .field-row-stacked label {
+    font-size: 11px;
+  }
+
+  .field-row-stacked input,
+  .field-row-stacked select {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  #errorMsg {
+    display: none;
+    color: #c0392b;
+    font-size: 11px;
+    text-align: center;
+    margin-top: 10px;
+    background: white;
+    border: 1px solid #c0392b;
+    padding: 4px 8px;
+    font-weight: bold;
+  }
+
+  button[type="button"], button {
+    cursor: pointer;
+  }
+
+  .btn-full {
+    width: 100%;
+    margin-top: 4px;
+  }
+</style>
 </head>
-<body class="bg-zinc-950 text-zinc-100 min-h-screen flex flex-col items-center justify-center px-4 py-12">
+<body>
 
-  <div class="mb-10 text-center">
-    <h1 class="text-5xl font-black tracking-widest mb-1">ELEVEN</h1>
-    <p class="text-zinc-500 text-sm">sayı oyunu</p>
+  <div class="desktop-icon">
+    <h1>ELEVEN</h1>
+    <p>sayı oyunu</p>
   </div>
 
-  <div class="flex flex-col md:flex-row gap-6 w-full max-w-2xl items-start">
+  <div class="main-layout">
 
-    <div class="flex-1 bg-zinc-900 border border-zinc-800 rounded-xl p-6">
-      <h2 class="text-xs uppercase tracking-widest text-zinc-500 mb-5">Oluştur</h2>
-      <label class="block text-xs text-zinc-400 mb-1">İsim</label>
-      <input id="name" type="text" maxlength="20" placeholder="adınız..."
-        class="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600 outline-none focus:border-zinc-500 mb-4">
-      <label class="block text-xs text-zinc-400 mb-1">Sınıf Boyutu</label>
-      <select id="gridSize"
-        class="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-100 outline-none focus:border-zinc-500 mb-5">
-        <option value="5x4">5 × 4 — 20 kişi</option>
-        <option value="5x5">5 × 5 — 25 kişi</option>
-        <option value="4x4">4 × 4 — 16 kişi</option>
-        <option value="6x5">6 × 5 — 30 kişi</option>
-      </select>
-      <button onclick="createRoom()"
-        class="w-full bg-white text-zinc-950 font-semibold text-sm rounded-lg py-2.5 hover:bg-zinc-200 transition-colors">
-        Parti Oluştur
-      </button>
+    <!-- CREATE WINDOW -->
+    <div class="window active" style="max-width: 280px; width: 280px;">
+      <div class="title-bar">
+        <div class="title-bar-text">Parti Oluştur</div>
+        <div class="title-bar-controls">
+          <button aria-label="Minimize"></button>
+          <button aria-label="Maximize" disabled></button>
+          <button aria-label="Close"></button>
+        </div>
+      </div>
+      <div class="window-body has-space">
+        <div class="field-row-stacked">
+          <label for="name">İsim:</label>
+          <input id="name" type="text" maxlength="20" placeholder="adınız...">
+        </div>
+        <div class="field-row-stacked">
+          <label for="gridSize">Sınıf Boyutu:</label>
+          <select id="gridSize">
+            <option value="5x4">5 × 4 — 20 kişi</option>
+            <option value="5x5">5 × 5 — 25 kişi</option>
+            <option value="4x4">4 × 4 — 16 kişi</option>
+            <option value="6x5">6 × 5 — 30 kişi</option>
+          </select>
+        </div>
+        <div style="text-align: right; margin-top: 12px;">
+          <button class="default" onclick="createRoom()">Parti Oluştur</button>
+        </div>
+      </div>
     </div>
 
-    <div class="flex md:flex-col items-center gap-2 text-zinc-600 text-xs font-bold self-center">
-      <div class="w-12 h-px md:w-px md:h-12 bg-zinc-800"></div>
-      YA DA
-      <div class="w-12 h-px md:w-px md:h-12 bg-zinc-800"></div>
-    </div>
+    <div class="or-divider">— YA DA —</div>
 
-    <div class="flex-1 bg-zinc-900 border border-zinc-800 rounded-xl p-6">
-      <h2 class="text-xs uppercase tracking-widest text-zinc-500 mb-5">Katıl</h2>
-      <label class="block text-xs text-zinc-400 mb-1">İsim</label>
-      <input id="nameJoin" type="text" maxlength="20" placeholder="adınız..."
-        class="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600 outline-none focus:border-zinc-500 mb-4">
-      <label class="block text-xs text-zinc-400 mb-1">Parti Kodu</label>
-      <input id="code" type="text" maxlength="10" placeholder="XXXXX" autocomplete="off"
-        class="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600 outline-none focus:border-zinc-500 mb-5 uppercase tracking-widest">
-      <button onclick="joinRoom()"
-        class="w-full bg-zinc-700 text-zinc-100 font-semibold text-sm rounded-lg py-2.5 hover:bg-zinc-600 transition-colors">
-        Katıl
-      </button>
+    <!-- JOIN WINDOW -->
+    <div class="window active" style="max-width: 280px; width: 280px;">
+      <div class="title-bar">
+        <div class="title-bar-text">Partiye Katıl</div>
+        <div class="title-bar-controls">
+          <button aria-label="Minimize"></button>
+          <button aria-label="Maximize" disabled></button>
+          <button aria-label="Close"></button>
+        </div>
+      </div>
+      <div class="window-body has-space">
+        <div class="field-row-stacked">
+          <label for="nameJoin">İsim:</label>
+          <input id="nameJoin" type="text" maxlength="20" placeholder="adınız...">
+        </div>
+        <div class="field-row-stacked">
+          <label for="code">Parti Kodu:</label>
+          <input id="code" type="text" maxlength="10" placeholder="XXXXX" autocomplete="off" style="text-transform:uppercase; letter-spacing: 4px;">
+        </div>
+        <div style="text-align: right; margin-top: 12px;">
+          <button onclick="joinRoom()">Katıl</button>
+        </div>
+      </div>
     </div>
 
   </div>
 
-  <p id="errorMsg" class="hidden mt-5 text-red-400 text-sm text-center"></p>
+  <div id="errorMsg"></div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
@@ -65,10 +185,10 @@ const socket = io()
 function showError(msg) {
   const el = document.getElementById("errorMsg")
   el.textContent = msg
-  el.classList.remove("hidden")
+  el.style.display = "block"
 }
 function clearError() {
-  document.getElementById("errorMsg").classList.add("hidden")
+  document.getElementById("errorMsg").style.display = "none"
 }
 
 function createRoom() {
