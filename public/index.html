@@ -3,180 +3,78 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Eleven</title>
-<link rel="stylesheet" href="https://unpkg.com/7.css">
-<style>
-  body {
-    background: #1a3a5c url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4"><rect width="4" height="4" fill="%231a3a5c"/><rect width="1" height="1" fill="%23204a72" opacity="0.5"/></svg>');
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    font-family: 'Tahoma', 'Segoe UI', sans-serif;
-  }
-
-  .desktop-icon {
-    text-align: center;
-    margin-bottom: 20px;
-    color: white;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-  }
-
-  .desktop-icon h1 {
-    font-size: 28px;
-    font-weight: bold;
-    letter-spacing: 6px;
-    margin: 0 0 2px;
-    color: #fff;
-    text-shadow: 0 0 10px rgba(100,180,255,0.8), 1px 1px 3px rgba(0,0,0,0.9);
-  }
-
-  .desktop-icon p {
-    font-size: 11px;
-    color: rgba(255,255,255,0.75);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin: 0;
-  }
-
-  .main-layout {
-    display: flex;
-    gap: 16px;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .window {
-    min-width: 260px;
-  }
-
-  .window-body.has-space {
-    padding: 12px;
-  }
-
-  .or-divider {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: bold;
-    font-size: 11px;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-    padding: 8px;
-    align-self: center;
-  }
-
-  .field-row-stacked {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    margin-bottom: 10px;
-  }
-
-  .field-row-stacked label {
-    font-size: 11px;
-  }
-
-  .field-row-stacked input,
-  .field-row-stacked select {
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  #errorMsg {
-    display: none;
-    color: #c0392b;
-    font-size: 11px;
-    text-align: center;
-    margin-top: 10px;
-    background: white;
-    border: 1px solid #c0392b;
-    padding: 4px 8px;
-    font-weight: bold;
-  }
-
-  button[type="button"], button {
-    cursor: pointer;
-  }
-
-  .btn-full {
-    width: 100%;
-    margin-top: 4px;
-  }
-</style>
+<title>eleven</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>* { font-family: 'Inter', sans-serif; }</style>
 </head>
-<body>
+<body class="bg-neutral-950 text-neutral-100 min-h-screen flex flex-col items-center justify-center p-6">
 
-  <div class="desktop-icon">
-    <h1>ELEVEN</h1>
-    <p>sayı oyunu</p>
+  <div class="mb-10 text-center">
+    <p class="text-3xl font-semibold text-white tracking-tight mb-1">eleven</p>
+    <p class="text-neutral-500 text-sm">sayı oyunu</p>
   </div>
 
-  <div class="main-layout">
+  <div class="w-full max-w-2xl">
+    <div class="flex flex-col md:flex-row gap-4 items-stretch">
 
-    <!-- CREATE WINDOW -->
-    <div class="window active" style="max-width: 280px; width: 280px;">
-      <div class="title-bar">
-        <div class="title-bar-text">Parti Oluştur</div>
-        <div class="title-bar-controls">
-          <button aria-label="Minimize"></button>
-          <button aria-label="Maximize" disabled></button>
-          <button aria-label="Close"></button>
+      <!-- Create -->
+      <div class="flex-1 bg-neutral-900 border border-neutral-800 rounded-2xl p-6 flex flex-col">
+        <p class="text-xs text-neutral-500 uppercase tracking-widest mb-5">parti oluştur</p>
+        <div class="flex flex-col gap-4 flex-1">
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs text-neutral-400">isim</label>
+            <input id="name" type="text" maxlength="20" placeholder="adınız"
+              class="bg-neutral-800 border border-neutral-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-neutral-600 outline-none focus:border-neutral-500 transition-colors">
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs text-neutral-400">sınıf boyutu</label>
+            <select id="gridSize"
+              class="bg-neutral-800 border border-neutral-700 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-neutral-500 transition-colors cursor-pointer">
+              <option value="5x4">5 × 4 — 20 kişi</option>
+              <option value="5x5">5 × 5 — 25 kişi</option>
+              <option value="4x4">4 × 4 — 16 kişi</option>
+              <option value="6x5">6 × 5 — 30 kişi</option>
+            </select>
+          </div>
+          <button onclick="createRoom()"
+            class="mt-auto bg-white text-neutral-950 font-medium text-sm rounded-xl py-2.5 hover:bg-neutral-200 transition-colors cursor-pointer">
+            oluştur
+          </button>
         </div>
       </div>
-      <div class="window-body has-space">
-        <div class="field-row-stacked">
-          <label for="name">İsim:</label>
-          <input id="name" type="text" maxlength="20" placeholder="adınız...">
-        </div>
-        <div class="field-row-stacked">
-          <label for="gridSize">Sınıf Boyutu:</label>
-          <select id="gridSize">
-            <option value="5x4">5 × 4 — 20 kişi</option>
-            <option value="5x5">5 × 5 — 25 kişi</option>
-            <option value="4x4">4 × 4 — 16 kişi</option>
-            <option value="6x5">6 × 5 — 30 kişi</option>
-          </select>
-        </div>
-        <div style="text-align: right; margin-top: 12px;">
-          <button class="default" onclick="createRoom()">Parti Oluştur</button>
+
+      <!-- Divider -->
+      <div class="flex md:flex-col items-center gap-2 md:gap-3 py-2 md:py-6">
+        <div class="flex-1 h-px md:h-full md:w-px bg-neutral-800"></div>
+        <span class="text-neutral-600 text-xs shrink-0">ya da</span>
+        <div class="flex-1 h-px md:h-full md:w-px bg-neutral-800"></div>
+      </div>
+
+      <!-- Join -->
+      <div class="flex-1 bg-neutral-900 border border-neutral-800 rounded-2xl p-6 flex flex-col">
+        <p class="text-xs text-neutral-500 uppercase tracking-widest mb-5">partiye katıl</p>
+        <div class="flex flex-col gap-4 flex-1">
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs text-neutral-400">isim</label>
+            <input id="nameJoin" type="text" maxlength="20" placeholder="adınız"
+              class="bg-neutral-800 border border-neutral-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-neutral-600 outline-none focus:border-neutral-500 transition-colors">
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs text-neutral-400">parti kodu</label>
+            <input id="code" type="text" maxlength="10" placeholder="xxxxx" autocomplete="off"
+              class="bg-neutral-800 border border-neutral-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-neutral-600 outline-none focus:border-neutral-500 transition-colors uppercase tracking-widest">
+          </div>
+          <button onclick="joinRoom()"
+            class="mt-auto bg-neutral-800 border border-neutral-700 text-white font-medium text-sm rounded-xl py-2.5 hover:bg-neutral-700 transition-colors cursor-pointer">
+            katıl
+          </button>
         </div>
       </div>
+
     </div>
-
-    <div class="or-divider">— YA DA —</div>
-
-    <!-- JOIN WINDOW -->
-    <div class="window active" style="max-width: 280px; width: 280px;">
-      <div class="title-bar">
-        <div class="title-bar-text">Partiye Katıl</div>
-        <div class="title-bar-controls">
-          <button aria-label="Minimize"></button>
-          <button aria-label="Maximize" disabled></button>
-          <button aria-label="Close"></button>
-        </div>
-      </div>
-      <div class="window-body has-space">
-        <div class="field-row-stacked">
-          <label for="nameJoin">İsim:</label>
-          <input id="nameJoin" type="text" maxlength="20" placeholder="adınız...">
-        </div>
-        <div class="field-row-stacked">
-          <label for="code">Parti Kodu:</label>
-          <input id="code" type="text" maxlength="10" placeholder="XXXXX" autocomplete="off" style="text-transform:uppercase; letter-spacing: 4px;">
-        </div>
-        <div style="text-align: right; margin-top: 12px;">
-          <button onclick="joinRoom()">Katıl</button>
-        </div>
-      </div>
-    </div>
-
+    <p id="errorMsg" class="hidden text-red-400 text-sm text-center mt-4"></p>
   </div>
-
-  <div id="errorMsg"></div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
@@ -185,16 +83,16 @@ const socket = io()
 function showError(msg) {
   const el = document.getElementById("errorMsg")
   el.textContent = msg
-  el.style.display = "block"
+  el.classList.remove("hidden")
 }
 function clearError() {
-  document.getElementById("errorMsg").style.display = "none"
+  document.getElementById("errorMsg").classList.add("hidden")
 }
 
 function createRoom() {
   clearError()
   const name = document.getElementById("name").value.trim()
-  if (!name) return showError("İsim boş olamaz.")
+  if (!name) return showError("isim boş olamaz")
   const grid = document.getElementById("gridSize").value
   const [cols, rows] = grid.split("x").map(Number)
   localStorage.setItem("playerName", name)
@@ -205,8 +103,8 @@ function joinRoom() {
   clearError()
   const name = document.getElementById("nameJoin").value.trim()
   const code = document.getElementById("code").value.trim().toUpperCase()
-  if (!name) return showError("İsim boş olamaz.")
-  if (!code) return showError("Parti kodu boş olamaz.")
+  if (!name) return showError("isim boş olamaz")
+  if (!code) return showError("parti kodu boş olamaz")
   localStorage.setItem("playerName", name)
   socket.emit("joinRoom", { name, code })
 }
