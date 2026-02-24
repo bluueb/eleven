@@ -32,7 +32,7 @@ body {
   align-items: flex-start;
 }
 #gameCol { flex: 1; min-width: 0; }
-#chatCol { width: 260px; flex-shrink: 0; display: flex; flex-direction: column; }
+
 
 /* Lobby */
 #lobby { text-align: center; }
@@ -71,27 +71,7 @@ body {
 #feed p { font-size: 9px; color: #e76e55; margin: 3px 0; animation: fadeIn 0.25s ease; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; } }
 
-/* Chat */
-#chatBox {
-  background: #212529;
-  border: 4px solid #000;
-  height: 420px;
-  overflow-y: auto;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-#chatBox::-webkit-scrollbar { width: 4px; }
-#chatBox::-webkit-scrollbar-thumb { background: #444; }
-.chat-msg { font-size: 8px; line-height: 1.7; word-break: break-word; }
-.chat-msg .chat-name { display: block; margin-bottom: 2px; color: #92cc41; }
-.chat-msg.is-me .chat-name { color: #209cee; }
-.chat-msg.is-system { color: #666; font-style: italic; }
-#chatInputRow { display: flex; gap: 6px; }
-#chatInput { font-family: "Press Start 2P"; font-size: 9px; flex: 1; }
-#chatSendBtn { font-family: "Press Start 2P"; font-size: 9px; padding: 6px 10px; }
+
 
 /* Overlay */
 #overlay {
@@ -104,11 +84,7 @@ body {
 
 .hidden { display: none !important; }
 
-@media (max-width: 720px) {
-  #mainLayout { flex-direction: column; }
-  #chatCol { width: 100%; }
-  #chatBox { height: 250px; }
-}
+
 </style>
 </head>
 <body>
@@ -148,14 +124,6 @@ body {
       <div id="grid"></div>
     </div>
 
-    <!-- CHAT -->
-    <div id="chatCol">
-      <div id="chatBox"></div>
-      <div id="chatInputRow">
-        <input id="chatInput" class="nes-input is-dark" placeholder="mesaj..." maxlength="200" autocomplete="off">
-        <button id="chatSendBtn" class="nes-btn is-success" onclick="sendChat()">→</button>
-      </div>
-    </div>
   </div>
 
 </section>
@@ -215,7 +183,6 @@ socket.on("updateRoom", data => render(data))
 
 socket.on("playerEliminated", ({ name }) => {
   addFeed(`💀 ${name} elendi`)
-  addChatSystem(`💀 ${name} elendi!`)
 })
 
 socket.on("gameOver", ({ winner, reason }) => {
@@ -234,9 +201,6 @@ socket.on("gameOver", ({ winner, reason }) => {
   `)
 })
 
-socket.on("chatMessage", ({ name, text }) => {
-  addChatMsg(name, text)
-})
 
 function render(data) {
   if (data.started) {
@@ -333,35 +297,6 @@ function addFeed(msg) {
   while (feed.children.length > 4) feed.removeChild(feed.lastChild)
 }
 
-function addChatMsg(name, text) {
-  const box = document.getElementById("chatBox")
-  const div = document.createElement("div")
-  div.className = "chat-msg" + (name === playerName ? " is-me" : "")
-  div.innerHTML = `<span class="chat-name">${escapeHtml(name)}</span>${escapeHtml(text)}`
-  box.appendChild(div)
-  box.scrollTop = box.scrollHeight
-}
-
-function addChatSystem(text) {
-  const box = document.getElementById("chatBox")
-  const div = document.createElement("div")
-  div.className = "chat-msg is-system"
-  div.textContent = text
-  box.appendChild(div)
-  box.scrollTop = box.scrollHeight
-}
-
-function escapeHtml(str) {
-  return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")
-}
-
-function sendChat() {
-  const input = document.getElementById("chatInput")
-  const text = input.value.trim()
-  if (!text) return
-  socket.emit("chatMessage", text)
-  input.value = ""
-}
 
 function startGame() { socket.emit("startGame") }
 
@@ -381,10 +316,7 @@ function sendMove() {
 }
 
 document.addEventListener("keydown", e => {
-  if (e.key === "Enter") {
-    if (document.activeElement === document.getElementById("chatInput")) sendChat()
-    else sendMove()
-  }
+  if (e.key === "Enter") sendMove()
 })
 </script>
 </body>
