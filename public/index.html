@@ -1,104 +1,87 @@
 <!DOCTYPE html>
-<html>
+<html lang="tr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Eleven</title>
-<link href="https://unpkg.com/nes.css/css/nes.min.css" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/micah5/PSone.css@master/ps1.css" rel="stylesheet">
 <style>
 * { box-sizing: border-box; }
 body {
-  font-family: "Press Start 2P";
-  background: #212529;
+  background: #000;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  padding: 40px 16px;
+  padding: 2rem 1rem;
+  font-family: inherit;
 }
 
 h1 {
-  color: #92cc41;
-  font-size: 28px;
-  letter-spacing: 6px;
-  margin-bottom: 8px;
+  color: #fff;
+  font-size: 2.5rem;
+  letter-spacing: 0.4rem;
   text-align: center;
+  margin-bottom: 0.3rem;
 }
 .subtitle {
-  font-size: 8px;
-  color: #666;
-  margin-bottom: 40px;
+  color: #888;
+  font-size: 0.7rem;
   text-align: center;
+  margin-bottom: 2.5rem;
+  letter-spacing: 0.2rem;
 }
 
 .cards {
   display: flex;
-  gap: 24px;
+  flex-direction: column;
+  gap: 1.5rem;
   width: 100%;
-  max-width: 820px;
-  align-items: flex-start;
+  max-width: 420px;
 }
 
-.card {
-  flex: 1;
+.ps1-container {
+  padding: 1.5rem;
 }
 
-.card label {
-  font-size: 9px;
+.ps1-container h2 {
+  font-size: 0.75rem;
+  letter-spacing: 0.15rem;
   color: #aaa;
+  margin-bottom: 1.2rem;
+  text-transform: uppercase;
+}
+
+label {
   display: block;
-  margin-bottom: 8px;
+  font-size: 0.7rem;
+  color: #aaa;
+  margin-bottom: 0.3rem;
 }
 
-.card .nes-input,
-.card .nes-select select {
-  font-size: 10px;
+.ps1-input, .ps1-select {
   width: 100%;
+  margin-bottom: 1rem;
 }
 
-.card .nes-select {
+.ps1-btn {
   width: 100%;
-}
-
-.card .nes-btn {
-  width: 100%;
-  margin-top: 16px;
-  font-size: 10px;
 }
 
 .divider {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding-top: 40px;
+  text-align: center;
   color: #444;
-  font-size: 10px;
-  gap: 10px;
-  user-select: none;
-}
-.divider-line {
-  width: 2px;
-  height: 60px;
-  background: #333;
+  font-size: 0.7rem;
+  letter-spacing: 0.2rem;
 }
 
 #errorMsg {
   display: none;
-  margin-top: 20px;
-  font-size: 9px;
+  color: #e74c3c;
+  font-size: 0.7rem;
   text-align: center;
-  max-width: 820px;
-  width: 100%;
-}
-
-@media (max-width: 600px) {
-  .cards { flex-direction: column; }
-  .divider { flex-direction: row; padding-top: 0; }
-  .divider-line { width: 60px; height: 2px; }
-  h1 { font-size: 20px; }
+  margin-top: 1rem;
 }
 </style>
 </head>
@@ -109,52 +92,34 @@ h1 {
 
 <div class="cards">
 
-  <!-- Oluştur -->
-  <section class="nes-container with-title is-dark card">
-    <h2 class="title">Oluştur</h2>
-
+  <div class="ps1-container is-dark">
+    <h2>Oluştur</h2>
     <label>İsim</label>
-    <input id="name" class="nes-input is-dark" maxlength="20" placeholder="adınız...">
-
-    <br><br>
-
+    <input id="name" class="ps1-input" type="text" maxlength="20" placeholder="adınız...">
     <label>Sınıf Boyutu</label>
-    <div class="nes-select is-dark">
-      <select id="gridSize">
-        <option value="5x4">5 × 4 — 20 kişi</option>
-        <option value="5x5">5 × 5 — 25 kişi</option>
-        <option value="4x4">4 × 4 — 16 kişi</option>
-        <option value="6x5">6 × 5 — 30 kişi</option>
-      </select>
-    </div>
-
-    <button class="nes-btn is-success" onclick="createRoom()">Parti Oluştur</button>
-  </section>
-
-  <div class="divider">
-    <div class="divider-line"></div>
-    YA DA
-    <div class="divider-line"></div>
+    <select id="gridSize" class="ps1-select">
+      <option value="5x4">5 × 4 — 20 kişi</option>
+      <option value="5x5">5 × 5 — 25 kişi</option>
+      <option value="4x4">4 × 4 — 16 kişi</option>
+      <option value="6x5">6 × 5 — 30 kişi</option>
+    </select>
+    <button class="ps1-btn is-primary" onclick="createRoom()">Parti Oluştur</button>
   </div>
 
-  <!-- Katıl -->
-  <section class="nes-container with-title is-dark card">
-    <h2 class="title">Katıl</h2>
+  <div class="divider">— YA DA —</div>
 
+  <div class="ps1-container is-dark">
+    <h2>Katıl</h2>
     <label>İsim</label>
-    <input id="nameJoin" class="nes-input is-dark" maxlength="20" placeholder="adınız...">
-
-    <br><br>
-
+    <input id="nameJoin" class="ps1-input" type="text" maxlength="20" placeholder="adınız...">
     <label>Parti Kodu</label>
-    <input id="code" class="nes-input is-dark" maxlength="10" placeholder="XXXXX" style="text-transform:uppercase;letter-spacing:4px;">
-
-    <button class="nes-btn is-warning" onclick="joinRoom()">Katıl</button>
-  </section>
+    <input id="code" class="ps1-input" type="text" maxlength="10" placeholder="XXXXX" style="text-transform:uppercase;letter-spacing:0.3rem;">
+    <button class="ps1-btn is-warning" onclick="joinRoom()">Katıl</button>
+  </div>
 
 </div>
 
-<p id="errorMsg" class="nes-text is-error"></p>
+<p id="errorMsg"></p>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
@@ -175,10 +140,8 @@ function createRoom() {
   clearError()
   const name = document.getElementById("name").value.trim()
   if (!name) return showError("İsim boş olamaz.")
-
   const grid = document.getElementById("gridSize").value
   const [cols, rows] = grid.split("x").map(Number)
-
   localStorage.setItem("playerName", name)
   socket.emit("createRoom", { name, rows, cols })
 }
@@ -187,10 +150,8 @@ function joinRoom() {
   clearError()
   const name = document.getElementById("nameJoin").value.trim()
   const code = document.getElementById("code").value.trim().toUpperCase()
-
   if (!name) return showError("İsim boş olamaz.")
   if (!code) return showError("Parti kodu boş olamaz.")
-
   localStorage.setItem("playerName", name)
   socket.emit("joinRoom", { name, code })
 }
@@ -199,28 +160,16 @@ socket.on("roomCreated", code => {
   const name = document.getElementById("name").value.trim()
   window.location = `/game.html?room=${code}&name=${encodeURIComponent(name)}`
 })
-
 socket.on("updateRoom", () => {
   const name = document.getElementById("nameJoin").value.trim()
   const code = document.getElementById("code").value.trim().toUpperCase()
-  if (code) {
-    window.location = `/game.html?room=${code}&name=${encodeURIComponent(name)}`
-  }
+  if (code) window.location = `/game.html?room=${code}&name=${encodeURIComponent(name)}`
 })
-
 socket.on("errorMessage", msg => showError(msg))
 
-// Enter tuşu desteği
-document.getElementById("code").addEventListener("keydown", e => {
-  if (e.key === "Enter") joinRoom()
-})
-document.getElementById("nameJoin").addEventListener("keydown", e => {
-  if (e.key === "Enter") joinRoom()
-})
-document.getElementById("name").addEventListener("keydown", e => {
-  if (e.key === "Enter") createRoom()
-})
+document.getElementById("name").addEventListener("keydown", e => { if (e.key === "Enter") createRoom() })
+document.getElementById("nameJoin").addEventListener("keydown", e => { if (e.key === "Enter") joinRoom() })
+document.getElementById("code").addEventListener("keydown", e => { if (e.key === "Enter") joinRoom() })
 </script>
-
 </body>
 </html>

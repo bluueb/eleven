@@ -1,132 +1,159 @@
 <!DOCTYPE html>
-<html>
+<html lang="tr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Eleven</title>
-<link href="https://unpkg.com/nes.css/css/nes.min.css" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/micah5/PSone.css@master/ps1.css" rel="stylesheet">
 <style>
 * { box-sizing: border-box; }
 body {
-  font-family: "Press Start 2P";
-  background: #1a1a1a;
-  display: flex;
-  justify-content: center;
-  padding: 30px 16px 60px;
+  background: #000;
+  padding: 1.5rem 1rem 4rem;
   min-height: 100vh;
-}
-.wrapper { width: 1100px; max-width: 100%; }
-
-.code {
-  text-align: center;
-  font-size: 16px;
-  margin-bottom: 20px;
-  color: #92cc41;
+  font-family: inherit;
 }
 
-/* Main layout: game + chat */
-#mainLayout {
+header {
   display: flex;
-  gap: 20px;
-  align-items: flex-start;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #333;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
 }
-#gameCol { flex: 1; min-width: 0; }
+header h1 { margin: 0; font-size: 1.3rem; letter-spacing: 0.3rem; color: #fff; }
+.code-tag { font-size: 0.7rem; color: #666; letter-spacing: 0.1rem; }
+.code-tag b { color: #fff; }
 
+.main { max-width: 1000px; margin: 0 auto; }
 
 /* Lobby */
-#lobby { text-align: center; }
-#playerList { list-style: none; padding: 0; margin: 16px 0; }
-#playerList li { font-size: 10px; padding: 8px 0; border-bottom: 1px solid #333; display: flex; justify-content: space-between; }
-#playerList li .tag { color: #92cc41; font-size: 8px; }
-#waitMsg { font-size: 9px; color: #888; margin-top: 12px; }
+#lobby { max-width: 400px; margin: 0 auto; text-align: center; }
+#lobby h2 { font-size: 0.7rem; letter-spacing: 0.2rem; color: #888; text-transform: uppercase; margin-bottom: 1rem; }
+#playerList { list-style: none; padding: 0; margin: 0 0 1.5rem; }
+#playerList li { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #333; font-size: 0.75rem; color: #ccc; }
+#playerList li .tag { color: #aaa; font-size: 0.65rem; }
+#waitMsg { font-size: 0.7rem; color: #666; margin-bottom: 1rem; }
+#startBtn { width: 100%; }
 
-/* Grid */
-.row { display: flex; justify-content: center; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
-.desk {
-  width: 130px; height: 100px;
-  background: #3a3a3a;
-  border: 4px solid #000;
-  display: flex; align-items: center; justify-content: center; flex-direction: column;
-  position: relative;
+/* Scoreboard */
+#scoreboard {
+  display: flex;
+  justify-content: center;
+  gap: 4rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
 }
-.student { font-size: 9px; margin-top: 6px; text-align: center; word-break: break-all; padding: 0 4px; }
-.active { border: 4px solid red; background: #3a1a1a; }
-.is-me { border: 4px solid #209cee; }
-.active.is-me { border: 4px solid #92cc41; background: #1a3a1a; }
-.eliminated-desk { border: 4px solid #222 !important; opacity: 0.35; }
-.eliminated-desk .student { text-decoration: line-through; color: #666; }
-.desk-num { position: absolute; top: 3px; right: 5px; font-size: 7px; color: #666; }
+.stat { text-align: center; }
+.stat .val { font-size: 4rem; color: #fff; line-height: 1; display: block; }
+.stat .lbl { font-size: 0.65rem; color: #666; text-transform: uppercase; letter-spacing: 0.15rem; margin-top: 0.3rem; display: block; }
 
-/* Game controls */
-#gameControls { text-align: center; margin-bottom: 24px; }
-#number { text-align: center; font-size: 48px; color: #92cc41; margin-bottom: 8px; }
-#turnMsg { text-align: center; font-size: 10px; margin-bottom: 20px; min-height: 20px; }
-#moveRow { display: flex; justify-content: center; gap: 10px; align-items: center; flex-wrap: wrap; }
-#moveInput { width: 220px; }
-#moveError { font-size: 9px; margin-top: 10px; min-height: 18px; text-align: center; }
+#turnBanner {
+  text-align: center;
+  padding: 0.7rem;
+  margin-bottom: 1.2rem;
+  font-size: 0.75rem;
+  color: #666;
+  border: 1px solid #333;
+}
+#turnBanner.my-turn { border-color: #fff; color: #fff; }
+
+#moveArea { display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 0.3rem; }
+#moveArea input { width: 200px; }
+#moveArea button { }
+#moveError { text-align: center; font-size: 0.7rem; color: #e74c3c; min-height: 1rem; margin-bottom: 1.2rem; }
 
 /* Feed */
-#feed { margin-top: 16px; text-align: center; min-height: 28px; }
-#feed p { font-size: 9px; color: #e76e55; margin: 3px 0; animation: fadeIn 0.25s ease; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; } }
+#feed { text-align: center; margin-bottom: 1rem; min-height: 1.5rem; }
+#feed p { font-size: 0.72rem; color: #e74c3c; padding: 2px 0; animation: fi 0.2s ease; }
+@keyframes fi { from { opacity: 0; } to { opacity: 1; } }
 
-
+/* Grid */
+#grid { display: flex; flex-direction: column; gap: 8px; align-items: center; margin-top: 1rem; }
+.grid-row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.desk {
+  width: 110px; height: 78px;
+  background: #111;
+  border: 1px solid #333;
+  display: flex; align-items: center; justify-content: center; flex-direction: column;
+  position: relative;
+  transition: border-color 0.15s;
+}
+.desk .dnum { position: absolute; top: 3px; right: 5px; font-size: 0.6rem; color: #444; }
+.desk .dname { font-size: 0.68rem; text-align: center; padding: 0 4px; word-break: break-all; color: #ccc; }
+.desk.is-active { border-color: #fff; background: #1a1a1a; }
+.desk.is-active .dname { color: #fff; }
+.desk.is-me { border-color: #888; }
+.desk.is-out { opacity: 0.25; }
+.desk.is-out .dname { text-decoration: line-through; }
 
 /* Overlay */
-#overlay {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,0.85); z-index: 100;
-  justify-content: center; align-items: center;
-}
+#overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 100; justify-content: center; align-items: center; padding: 1rem; }
 #overlay.show { display: flex; }
-.overlay-box { width: 420px; max-width: 95vw; }
+#overlayBox { background: #111; border: 1px solid #444; padding: 2rem; width: 100%; max-width: 380px; text-align: center; }
+#overlayBox h2 { color: #fff; font-size: 1rem; letter-spacing: 0.2rem; margin-bottom: 0.8rem; }
+#overlayBox p { color: #888; font-size: 0.75rem; margin-bottom: 1.5rem; }
+#overlayBox input { width: 100%; margin-bottom: 0.5rem; }
+#overlayErr { font-size: 0.7rem; color: #e74c3c; min-height: 1rem; margin-bottom: 0.5rem; }
+.btn-row { display: flex; gap: 0.5rem; }
+.btn-row button { flex: 1; }
 
 .hidden { display: none !important; }
-
-
 </style>
 </head>
 <body>
 
 <div id="overlay">
-  <section class="nes-container with-title is-dark overlay-box" id="overlayBox"></section>
+  <div id="overlayBox"></div>
 </div>
 
-<section class="nes-container with-title is-dark wrapper">
-  <h2 class="title">SINIF</h2>
+<header>
+  <h1>ELEVEN</h1>
+  <div class="code-tag">KOD: <b id="roomCode"></b></div>
+</header>
 
-  <div class="code">Parti Kodu: <span id="roomCode"></span></div>
+<div class="main">
 
   <!-- LOBBY -->
   <div id="lobby" class="hidden">
-    <h3>Oyuncular</h3>
+    <h2>Oyuncular</h2>
     <ul id="playerList"></ul>
-    <button id="startBtn" class="nes-btn is-primary hidden" onclick="startGame()">Oyunu Başlat</button>
-    <p id="waitMsg" class="hidden">Hostin başlatması bekleniyor...</p>
+    <p id="waitMsg" class="hidden">Host oyunu başlatmasını bekliyor...</p>
+    <button id="startBtn" class="ps1-btn is-primary hidden" onclick="startGame()">Oyunu Başlat</button>
   </div>
 
   <!-- GAME -->
-  <div id="mainLayout" class="hidden">
-    <div id="gameCol">
-      <div id="gameControls">
-        <h2 id="number">0</h2>
-        <p id="turnMsg"></p>
-        <div id="moveRow">
-          <input id="moveInput" class="nes-input is-dark" placeholder="1 veya 1,2 veya 1,2,3" autocomplete="off">
-          <button class="nes-btn is-error" onclick="sendMove()">Gönder</button>
+  <div id="game" class="hidden">
+    <div class="ps1-container is-dark" style="margin-bottom:1.5rem;">
+      <div id="scoreboard">
+        <div class="stat">
+          <span class="val" id="numberDisplay">0</span>
+          <span class="lbl">Sayaç</span>
         </div>
-        <p id="moveError" class="nes-text is-error"></p>
+        <div class="stat">
+          <span class="val" id="aliveCount">-</span>
+          <span class="lbl">Kalan</span>
+        </div>
       </div>
-
-      <div id="feed"></div>
-      <br>
-      <div id="grid"></div>
     </div>
 
+    <div id="turnBanner">-</div>
+
+    <div id="moveArea">
+      <input class="ps1-input" id="moveInput" type="text" placeholder="1  veya  1,2  veya  1,2,3" autocomplete="off" style="margin:0;">
+      <button class="ps1-btn is-error" onclick="sendMove()" style="width:auto;">Gönder</button>
+    </div>
+    <div id="moveError"></div>
+
+    <div id="feed"></div>
+    <div id="grid"></div>
   </div>
 
-</section>
+</div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
@@ -147,12 +174,11 @@ function hideOverlay() {
 
 if (!playerName) {
   showOverlay(`
-    <h2 class="title">Hoş Geldin</h2>
+    <h2>HOŞ GELDİN</h2>
     <p>Adınız ne?</p>
-    <input id="nameInput" class="nes-input is-dark" maxlength="20">
-    <br><br>
-    <button class="nes-btn is-success" onclick="saveName()">Devam</button>
-    <p id="overlayErr" class="nes-text is-error" style="margin-top:10px;font-size:9px;min-height:16px;"></p>
+    <input class="ps1-input" id="nameInput" type="text" placeholder="isminiz..." maxlength="20">
+    <div id="overlayErr"></div>
+    <button class="ps1-btn is-primary" onclick="saveName()" style="width:100%">Devam</button>
   `)
 } else {
   joinRoom()
@@ -173,48 +199,44 @@ function joinRoom() {
 
 socket.on("errorMessage", msg => {
   showOverlay(`
-    <h2 class="title">Hata</h2>
-    <p style="font-size:10px;">${msg}</p>
-    <button class="nes-btn" onclick="window.location='/'">Geri Dön</button>
+    <h2>HATA</h2>
+    <p>${msg}</p>
+    <button class="ps1-btn" onclick="window.location='/'" style="width:100%">Geri Dön</button>
   `)
 })
 
 socket.on("updateRoom", data => render(data))
-
-socket.on("playerEliminated", ({ name }) => {
-  addFeed(`💀 ${name} elendi`)
-})
+socket.on("playerEliminated", ({ name }) => addFeed(`💀 ${name} elendi`))
 
 socket.on("gameOver", ({ winner, reason }) => {
   const isMe = winner === playerName
-  const title = isMe ? "🏆 Kazandın!" : "Oyun Bitti"
+  const title = isMe ? "KAZANDIN!" : "OYUN BİTTİ"
   const sub = reason === "opponent_left"
     ? (isMe ? "Rakip ayrıldı." : `Rakip ayrıldı. Kazanan: ${winner}`)
     : (isMe ? "Tebrikler!" : `Kazanan: ${winner}`)
   showOverlay(`
-    <h2 class="title">${title}</h2>
-    <p style="font-size:10px;">${sub}</p>
-    <br>
-    <button class="nes-btn is-success" onclick="location.reload()">Tekrar Oyna</button>
-    &nbsp;
-    <button class="nes-btn" onclick="window.location='/'">Ana Menü</button>
+    <h2>${title}</h2>
+    <p>${sub}</p>
+    <div class="btn-row">
+      <button class="ps1-btn is-success" onclick="location.reload()">Tekrar</button>
+      <button class="ps1-btn" onclick="window.location='/'">Menü</button>
+    </div>
   `)
 })
-
 
 function render(data) {
   if (data.started) {
     document.getElementById("lobby").classList.add("hidden")
-    document.getElementById("mainLayout").classList.remove("hidden")
+    document.getElementById("game").classList.remove("hidden")
   } else {
     document.getElementById("lobby").classList.remove("hidden")
-    document.getElementById("mainLayout").classList.add("hidden")
+    document.getElementById("game").classList.add("hidden")
 
     const list = document.getElementById("playerList")
     list.innerHTML = ""
     data.players.forEach(p => {
       const li = document.createElement("li")
-      li.innerHTML = `<span>${p}</span>` + (p === data.host ? `<span class="tag">HOST ⭐</span>` : "")
+      li.innerHTML = `<span>${p}</span>` + (p === data.host ? `<span class="tag">HOST</span>` : "")
       list.appendChild(li)
     })
 
@@ -228,20 +250,23 @@ function render(data) {
     return
   }
 
-  document.getElementById("number").innerText = data.currentNumber
+  document.getElementById("numberDisplay").textContent = data.currentNumber
+  document.getElementById("aliveCount").textContent = data.players.length
 
   const currentPlayer = data.players[data.currentPlayerIndex]
   const isMyTurn = currentPlayer === playerName
-  const turnEl = document.getElementById("turnMsg")
-  const moveInput = document.getElementById("moveInput")
+  const banner = document.getElementById("turnBanner")
+  const input = document.getElementById("moveInput")
 
   if (isMyTurn) {
-    turnEl.innerHTML = `<span style="color:#92cc41;">⬇ Sıra sende!</span>`
-    moveInput.disabled = false
-    moveInput.focus()
+    banner.textContent = "⬇ Sıra sende!"
+    banner.className = "my-turn"
+    input.disabled = false
+    input.focus()
   } else {
-    turnEl.innerHTML = `<span style="color:#aaa;">Sıra: ${currentPlayer || ""}</span>`
-    moveInput.disabled = true
+    banner.textContent = `Sıra: ${currentPlayer || ""}`
+    banner.className = ""
+    input.disabled = true
   }
 
   const eliminated = data.eliminated || []
@@ -256,36 +281,32 @@ function render(data) {
   grid.innerHTML = ""
   let idx = 0
   for (let r = 0; r < data.rows; r++) {
-    const rowDiv = document.createElement("div")
-    rowDiv.className = "row"
+    const row = document.createElement("div")
+    row.className = "grid-row"
     for (let c = 0; c < data.cols; c++) {
       const seat = seats[idx]
       const desk = document.createElement("div")
       desk.className = "desk"
-
       const num = document.createElement("div")
-      num.className = "desk-num"
+      num.className = "dnum"
       num.textContent = idx + 1
       desk.appendChild(num)
-
       if (seat) {
-        const nameDiv = document.createElement("div")
-        nameDiv.className = "student"
-        nameDiv.textContent = seat.name
-        desk.appendChild(nameDiv)
-
+        const nameEl = document.createElement("div")
+        nameEl.className = "dname"
+        nameEl.textContent = seat.name
+        desk.appendChild(nameEl)
         if (seat.state === "out") {
-          desk.classList.add("eliminated-desk")
+          desk.classList.add("is-out")
         } else {
-          if (idx === data.currentPlayerIndex) desk.classList.add("active")
+          if (idx === data.currentPlayerIndex) desk.classList.add("is-active")
           if (seat.name === playerName) desk.classList.add("is-me")
         }
       }
-
-      rowDiv.appendChild(desk)
+      row.appendChild(desk)
       idx++
     }
-    grid.appendChild(rowDiv)
+    grid.appendChild(row)
   }
 }
 
@@ -297,7 +318,6 @@ function addFeed(msg) {
   while (feed.children.length > 4) feed.removeChild(feed.lastChild)
 }
 
-
 function startGame() { socket.emit("startGame") }
 
 function sendMove() {
@@ -307,17 +327,12 @@ function sendMove() {
   errEl.textContent = ""
   if (!val) { errEl.textContent = "Sayı girin."; return }
   const nums = val.split(",").map(n => parseInt(n.trim())).filter(n => !isNaN(n))
-  if (nums.length === 0 || nums.length > 3) {
-    errEl.textContent = "1 ile 3 arasında sayı girin."
-    return
-  }
+  if (nums.length === 0 || nums.length > 3) { errEl.textContent = "1 ile 3 arasında sayı girin."; return }
   socket.emit("move", nums)
   input.value = ""
 }
 
-document.addEventListener("keydown", e => {
-  if (e.key === "Enter") sendMove()
-})
+document.addEventListener("keydown", e => { if (e.key === "Enter") sendMove() })
 </script>
 </body>
 </html>
