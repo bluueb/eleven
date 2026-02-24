@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Eleven</title>
 <link href="https://unpkg.com/nes.css/css/nes.min.css" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
@@ -11,191 +13,149 @@ body {
   background: #1a1a1a;
   display: flex;
   justify-content: center;
-  padding: 40px 20px;
+  padding: 30px 16px 60px;
   min-height: 100vh;
 }
 .wrapper { width: 1100px; max-width: 100%; }
 
 .code {
   text-align: center;
-  font-size: 18px;
+  font-size: 16px;
   margin-bottom: 20px;
   color: #92cc41;
 }
 
-/* Grid */
-.row {
+/* Main layout: game + chat */
+#mainLayout {
   display: flex;
-  justify-content: center;
   gap: 20px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
+  align-items: flex-start;
 }
-.desk {
-  width: 140px;
-  height: 110px;
-  background: #2d2d2d;
-  border: 4px solid #555;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  transition: border-color 0.2s, background 0.2s;
-  position: relative;
-}
-.desk.active {
-  border-color: #e76e55;
-  background: #3a1a1a;
-  box-shadow: 0 0 12px #e76e5588;
-}
-.desk.eliminated-desk {
-  border-color: #333;
-  background: #1a1a1a;
-  opacity: 0.35;
-}
-.student {
-  font-size: 9px;
-  margin-top: 6px;
-  text-align: center;
-  word-break: break-all;
-  padding: 0 4px;
-  color: #fff;
-}
-.desk.eliminated-desk .student {
-  text-decoration: line-through;
-  color: #666;
-}
-.desk-num {
-  font-size: 8px;
-  color: #666;
-  position: absolute;
-  top: 4px;
-  right: 6px;
-}
+#gameCol { flex: 1; min-width: 0; }
+#chatCol { width: 260px; flex-shrink: 0; display: flex; flex-direction: column; }
 
 /* Lobby */
 #lobby { text-align: center; }
-#playerList {
-  list-style: none;
-  padding: 0;
-  margin: 16px 0;
-  max-height: 300px;
+#playerList { list-style: none; padding: 0; margin: 16px 0; }
+#playerList li { font-size: 10px; padding: 8px 0; border-bottom: 1px solid #333; display: flex; justify-content: space-between; }
+#playerList li .tag { color: #92cc41; font-size: 8px; }
+#waitMsg { font-size: 9px; color: #888; margin-top: 12px; }
+
+/* Grid */
+.row { display: flex; justify-content: center; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+.desk {
+  width: 130px; height: 100px;
+  background: #3a3a3a;
+  border: 4px solid #000;
+  display: flex; align-items: center; justify-content: center; flex-direction: column;
+  position: relative;
+}
+.student { font-size: 9px; margin-top: 6px; text-align: center; word-break: break-all; padding: 0 4px; }
+.active { border: 4px solid red; background: #3a1a1a; }
+.is-me { border: 4px solid #209cee; }
+.active.is-me { border: 4px solid #92cc41; background: #1a3a1a; }
+.eliminated-desk { border: 4px solid #222 !important; opacity: 0.35; }
+.eliminated-desk .student { text-decoration: line-through; color: #666; }
+.desk-num { position: absolute; top: 3px; right: 5px; font-size: 7px; color: #666; }
+
+/* Game controls */
+#gameControls { text-align: center; margin-bottom: 24px; }
+#number { text-align: center; font-size: 48px; color: #92cc41; margin-bottom: 8px; }
+#turnMsg { text-align: center; font-size: 10px; margin-bottom: 20px; min-height: 20px; }
+#moveRow { display: flex; justify-content: center; gap: 10px; align-items: center; flex-wrap: wrap; }
+#moveInput { width: 220px; }
+#moveError { font-size: 9px; margin-top: 10px; min-height: 18px; text-align: center; }
+
+/* Feed */
+#feed { margin-top: 16px; text-align: center; min-height: 28px; }
+#feed p { font-size: 9px; color: #e76e55; margin: 3px 0; animation: fadeIn 0.25s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; } }
+
+/* Chat */
+#chatBox {
+  background: #212529;
+  border: 4px solid #000;
+  height: 420px;
   overflow-y: auto;
-}
-#playerList li {
-  font-size: 10px;
-  padding: 6px 0;
-  border-bottom: 1px solid #333;
-}
-
-/* Game UI */
-#gameControls {
-  text-align: center;
-  margin-bottom: 30px;
-}
-#number {
-  font-size: 48px;
-  text-align: center;
-  color: #92cc41;
-  margin: 0 0 10px 0;
-}
-#turnMsg {
-  text-align: center;
-  font-size: 10px;
-  margin-bottom: 20px;
-  min-height: 20px;
-}
-#moveRow {
+  padding: 10px;
   display: flex;
-  justify-content: center;
-  gap: 12px;
-  align-items: center;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 8px;
 }
-#moveInput {
-  width: 220px;
-}
-#moveError {
-  display: none;
-  font-size: 9px;
-  margin-top: 10px;
-  text-align: center;
-}
-#errorMsg {
-  display: none;
-  font-size: 9px;
-  margin-top: 10px;
-  text-align: center;
-}
-
-/* Eliminated feed */
-#eliminatedFeed {
-  margin-top: 20px;
-  text-align: center;
-  min-height: 30px;
-}
-#eliminatedFeed p {
-  font-size: 9px;
-  color: #e76e55;
-  margin: 4px 0;
-}
+#chatBox::-webkit-scrollbar { width: 4px; }
+#chatBox::-webkit-scrollbar-thumb { background: #444; }
+.chat-msg { font-size: 8px; line-height: 1.7; word-break: break-word; }
+.chat-msg .chat-name { display: block; margin-bottom: 2px; color: #92cc41; }
+.chat-msg.is-me .chat-name { color: #209cee; }
+.chat-msg.is-system { color: #666; font-style: italic; }
+#chatInputRow { display: flex; gap: 6px; }
+#chatInput { font-family: "Press Start 2P"; font-size: 9px; flex: 1; }
+#chatSendBtn { font-family: "Press Start 2P"; font-size: 9px; padding: 6px 10px; }
 
 /* Overlay */
 #overlay {
-  display: none;
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.85);
-  z-index: 200;
-  justify-content: center;
-  align-items: center;
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.85); z-index: 100;
+  justify-content: center; align-items: center;
 }
 #overlay.show { display: flex; }
 .overlay-box { width: 420px; max-width: 95vw; }
 
-.hidden { display: none; }
+.hidden { display: none !important; }
+
+@media (max-width: 720px) {
+  #mainLayout { flex-direction: column; }
+  #chatCol { width: 100%; }
+  #chatBox { height: 250px; }
+}
 </style>
 </head>
 <body>
 
-<!-- Overlay: name prompt, game over, eliminated notice -->
 <div id="overlay">
-  <section class="nes-container with-title is-dark overlay-box" id="overlayBox">
-    <!-- filled by JS -->
-  </section>
+  <section class="nes-container with-title is-dark overlay-box" id="overlayBox"></section>
 </div>
 
 <section class="nes-container with-title is-dark wrapper">
-  <h2 class="title">ELEVEN</h2>
+  <h2 class="title">SINIF</h2>
 
-  <div class="code">KOD: <span id="roomCode"></span></div>
-  <p id="errorMsg" class="nes-text is-error"></p>
+  <div class="code">Parti Kodu: <span id="roomCode"></span></div>
 
   <!-- LOBBY -->
-  <div id="lobby">
-    <h3 style="text-align:center;">Oyuncular</h3>
+  <div id="lobby" class="hidden">
+    <h3>Oyuncular</h3>
     <ul id="playerList"></ul>
     <button id="startBtn" class="nes-btn is-primary hidden" onclick="startGame()">Oyunu Başlat</button>
-    <p id="waitMsg" class="hidden" style="font-size:10px;text-align:center;color:#aaa;">Hostin oyunu başlatması bekleniyor...</p>
+    <p id="waitMsg" class="hidden">Hostin başlatması bekleniyor...</p>
   </div>
 
   <!-- GAME -->
-  <div id="game" class="hidden">
-    <p id="number">0</p>
-    <p id="turnMsg"></p>
-
-    <div id="gameControls">
-      <div id="moveRow">
-        <input id="moveInput" class="nes-input is-dark" placeholder="örn: 1 veya 1,2 veya 1,2,3">
-        <button class="nes-btn is-error" onclick="sendMove()">Gönder</button>
+  <div id="mainLayout" class="hidden">
+    <div id="gameCol">
+      <div id="gameControls">
+        <h2 id="number">0</h2>
+        <p id="turnMsg"></p>
+        <div id="moveRow">
+          <input id="moveInput" class="nes-input is-dark" placeholder="1 veya 1,2 veya 1,2,3" autocomplete="off">
+          <button class="nes-btn is-error" onclick="sendMove()">Gönder</button>
+        </div>
+        <p id="moveError" class="nes-text is-error"></p>
       </div>
-      <p id="moveError" class="nes-text is-error"></p>
+
+      <div id="feed"></div>
+      <br>
+      <div id="grid"></div>
     </div>
 
-    <div id="eliminatedFeed"></div>
-    <br>
-    <div id="grid"></div>
+    <!-- CHAT -->
+    <div id="chatCol">
+      <div id="chatBox"></div>
+      <div id="chatInputRow">
+        <input id="chatInput" class="nes-input is-dark" placeholder="mesaj..." maxlength="200" autocomplete="off">
+        <button id="chatSendBtn" class="nes-btn is-success" onclick="sendChat()">→</button>
+      </div>
+    </div>
   </div>
 
 </section>
@@ -209,15 +169,22 @@ let playerName = params.get("name") || localStorage.getItem("playerName")
 
 document.getElementById("roomCode").innerText = roomCode
 
-// ── Name prompt if missing ──────────────────────────────────────────────────
+function showOverlay(html) {
+  document.getElementById("overlayBox").innerHTML = html
+  document.getElementById("overlay").classList.add("show")
+}
+function hideOverlay() {
+  document.getElementById("overlay").classList.remove("show")
+}
+
 if (!playerName) {
   showOverlay(`
     <h2 class="title">Hoş Geldin</h2>
-    <p style="font-size:10px;">Adınız ne?</p>
+    <p>Adınız ne?</p>
     <input id="nameInput" class="nes-input is-dark" maxlength="20">
     <br><br>
     <button class="nes-btn is-success" onclick="saveName()">Devam</button>
-    <p id="nameErr" class="nes-text is-error" style="display:none;margin-top:10px;font-size:9px;"></p>
+    <p id="overlayErr" class="nes-text is-error" style="margin-top:10px;font-size:9px;min-height:16px;"></p>
   `)
 } else {
   joinRoom()
@@ -225,11 +192,7 @@ if (!playerName) {
 
 function saveName() {
   const name = document.getElementById("nameInput").value.trim()
-  if (!name) {
-    document.getElementById("nameErr").textContent = "İsim boş olamaz."
-    document.getElementById("nameErr").style.display = "block"
-    return
-  }
+  if (!name) { document.getElementById("overlayErr").textContent = "İsim boş olamaz."; return }
   localStorage.setItem("playerName", name)
   playerName = name
   hideOverlay()
@@ -240,177 +203,189 @@ function joinRoom() {
   socket.emit("joinRoom", { name: playerName, code: roomCode })
 }
 
-// ── Overlay helpers ─────────────────────────────────────────────────────────
-function showOverlay(html) {
-  document.getElementById("overlayBox").innerHTML = html
-  document.getElementById("overlay").classList.add("show")
-}
-function hideOverlay() {
-  document.getElementById("overlay").classList.remove("show")
-}
-
-// ── Socket events ───────────────────────────────────────────────────────────
 socket.on("errorMessage", msg => {
-  const el = document.getElementById("errorMsg")
-  el.textContent = msg
-  el.style.display = "block"
-})
-
-socket.on("updateRoom", data => {
-  render(data)
-})
-
-socket.on("playerEliminated", ({ name }) => {
-  const feed = document.getElementById("eliminatedFeed")
-  const p = document.createElement("p")
-  p.textContent = `💀 ${name} elendi!`
-  feed.prepend(p)
-  // keep only last 5 messages
-  while (feed.children.length > 5) feed.removeChild(feed.lastChild)
-})
-
-socket.on("gameOver", ({ winner, reason }) => {
-  let msg = winner === playerName
-    ? "🏆 Tebrikler, kazandın!"
-    : `🏆 Kazanan: ${winner}`
-  if (reason === "opponent_left") {
-    msg = winner === playerName
-      ? "Rakip ayrıldı. Kazandın!"
-      : `Rakip ayrıldı. Kazanan: ${winner}`
-  }
   showOverlay(`
-    <h2 class="title">Oyun Bitti</h2>
-    <p style="font-size:11px;">${msg}</p>
-    <br>
-    <button class="nes-btn is-success" onclick="window.location='/'">Ana Menü</button>
+    <h2 class="title">Hata</h2>
+    <p style="font-size:10px;">${msg}</p>
+    <button class="nes-btn" onclick="window.location='/'">Geri Dön</button>
   `)
 })
 
-// ── Render ──────────────────────────────────────────────────────────────────
-function render(data) {
-  // Player list in lobby
-  const list = document.getElementById("playerList")
-  list.innerHTML = ""
-  data.players.forEach(p => {
-    const li = document.createElement("li")
-    li.innerText = p + (p === data.host ? " ⭐" : "")
-    list.appendChild(li)
-  })
+socket.on("updateRoom", data => render(data))
 
+socket.on("playerEliminated", ({ name }) => {
+  addFeed(`💀 ${name} elendi`)
+  addChatSystem(`💀 ${name} elendi!`)
+})
+
+socket.on("gameOver", ({ winner, reason }) => {
+  const isMe = winner === playerName
+  const title = isMe ? "🏆 Kazandın!" : "Oyun Bitti"
+  const sub = reason === "opponent_left"
+    ? (isMe ? "Rakip ayrıldı." : `Rakip ayrıldı. Kazanan: ${winner}`)
+    : (isMe ? "Tebrikler!" : `Kazanan: ${winner}`)
+  showOverlay(`
+    <h2 class="title">${title}</h2>
+    <p style="font-size:10px;">${sub}</p>
+    <br>
+    <button class="nes-btn is-success" onclick="location.reload()">Tekrar Oyna</button>
+    &nbsp;
+    <button class="nes-btn" onclick="window.location='/'">Ana Menü</button>
+  `)
+})
+
+socket.on("chatMessage", ({ name, text }) => {
+  addChatMsg(name, text)
+})
+
+function render(data) {
   if (data.started) {
     document.getElementById("lobby").classList.add("hidden")
-    document.getElementById("game").classList.remove("hidden")
+    document.getElementById("mainLayout").classList.remove("hidden")
   } else {
-    const startBtn = document.getElementById("startBtn")
-    const waitMsg = document.getElementById("waitMsg")
+    document.getElementById("lobby").classList.remove("hidden")
+    document.getElementById("mainLayout").classList.add("hidden")
+
+    const list = document.getElementById("playerList")
+    list.innerHTML = ""
+    data.players.forEach(p => {
+      const li = document.createElement("li")
+      li.innerHTML = `<span>${p}</span>` + (p === data.host ? `<span class="tag">HOST ⭐</span>` : "")
+      list.appendChild(li)
+    })
+
     if (playerName === data.host) {
-      startBtn.classList.remove("hidden")
-      waitMsg.classList.add("hidden")
+      document.getElementById("startBtn").classList.remove("hidden")
+      document.getElementById("waitMsg").classList.add("hidden")
     } else {
-      startBtn.classList.add("hidden")
-      waitMsg.classList.remove("hidden")
+      document.getElementById("startBtn").classList.add("hidden")
+      document.getElementById("waitMsg").classList.remove("hidden")
     }
+    return
   }
 
-  // Current number
   document.getElementById("number").innerText = data.currentNumber
 
-  // Turn message
   const currentPlayer = data.players[data.currentPlayerIndex]
+  const isMyTurn = currentPlayer === playerName
   const turnEl = document.getElementById("turnMsg")
-  if (currentPlayer === playerName) {
+  const moveInput = document.getElementById("moveInput")
+
+  if (isMyTurn) {
     turnEl.innerHTML = `<span style="color:#92cc41;">⬇ Sıra sende!</span>`
+    moveInput.disabled = false
+    moveInput.focus()
   } else {
     turnEl.innerHTML = `<span style="color:#aaa;">Sıra: ${currentPlayer || ""}</span>`
+    moveInput.disabled = true
   }
 
-  // Grid
-  const grid = document.getElementById("grid")
-  grid.innerHTML = ""
-
-  // All seats = rows * cols, players fill from top, rest empty
-  const allNames = [...data.players]
   const eliminated = data.eliminated || []
-
-  // Build seat array: active players first, then eliminated at end (greyed)
   const seats = []
   for (let i = 0; i < data.rows * data.cols; i++) {
-    if (i < allNames.length) seats.push({ name: allNames[i], state: "active" })
-    else if (i < allNames.length + eliminated.length) seats.push({ name: eliminated[i - allNames.length], state: "eliminated" })
+    if (i < data.players.length) seats.push({ name: data.players[i], state: "active" })
+    else if (i < data.players.length + eliminated.length) seats.push({ name: eliminated[i - data.players.length], state: "out" })
     else seats.push(null)
   }
 
+  const grid = document.getElementById("grid")
+  grid.innerHTML = ""
   let idx = 0
   for (let r = 0; r < data.rows; r++) {
     const rowDiv = document.createElement("div")
     rowDiv.className = "row"
-
     for (let c = 0; c < data.cols; c++) {
       const seat = seats[idx]
       const desk = document.createElement("div")
       desk.className = "desk"
 
-      const numEl = document.createElement("div")
-      numEl.className = "desk-num"
-      numEl.innerText = idx + 1
-      desk.appendChild(numEl)
+      const num = document.createElement("div")
+      num.className = "desk-num"
+      num.textContent = idx + 1
+      desk.appendChild(num)
 
-      if (seat && seat.state === "active") {
+      if (seat) {
         const nameDiv = document.createElement("div")
         nameDiv.className = "student"
-        nameDiv.innerText = seat.name
+        nameDiv.textContent = seat.name
         desk.appendChild(nameDiv)
-        if (idx === data.currentPlayerIndex) {
-          desk.classList.add("active")
+
+        if (seat.state === "out") {
+          desk.classList.add("eliminated-desk")
+        } else {
+          if (idx === data.currentPlayerIndex) desk.classList.add("active")
+          if (seat.name === playerName) desk.classList.add("is-me")
         }
-      } else if (seat && seat.state === "eliminated") {
-        desk.classList.add("eliminated-desk")
-        const nameDiv = document.createElement("div")
-        nameDiv.className = "student"
-        nameDiv.innerText = seat.name
-        desk.appendChild(nameDiv)
       }
 
       rowDiv.appendChild(desk)
       idx++
     }
-
     grid.appendChild(rowDiv)
   }
 }
 
-// ── Actions ─────────────────────────────────────────────────────────────────
-function startGame() {
-  socket.emit("startGame")
+function addFeed(msg) {
+  const feed = document.getElementById("feed")
+  const p = document.createElement("p")
+  p.textContent = msg
+  feed.prepend(p)
+  while (feed.children.length > 4) feed.removeChild(feed.lastChild)
 }
+
+function addChatMsg(name, text) {
+  const box = document.getElementById("chatBox")
+  const div = document.createElement("div")
+  div.className = "chat-msg" + (name === playerName ? " is-me" : "")
+  div.innerHTML = `<span class="chat-name">${escapeHtml(name)}</span>${escapeHtml(text)}`
+  box.appendChild(div)
+  box.scrollTop = box.scrollHeight
+}
+
+function addChatSystem(text) {
+  const box = document.getElementById("chatBox")
+  const div = document.createElement("div")
+  div.className = "chat-msg is-system"
+  div.textContent = text
+  box.appendChild(div)
+  box.scrollTop = box.scrollHeight
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")
+}
+
+function sendChat() {
+  const input = document.getElementById("chatInput")
+  const text = input.value.trim()
+  if (!text) return
+  socket.emit("chatMessage", text)
+  input.value = ""
+}
+
+function startGame() { socket.emit("startGame") }
 
 function sendMove() {
-  const input = document.getElementById("moveInput").value.trim()
+  const input = document.getElementById("moveInput")
   const errEl = document.getElementById("moveError")
-  errEl.style.display = "none"
-
-  if (!input) {
-    errEl.textContent = "Sayı girin."
-    errEl.style.display = "block"
-    return
-  }
-
-  const nums = input.split(",").map(n => parseInt(n.trim())).filter(n => !isNaN(n))
-
+  const val = input.value.trim()
+  errEl.textContent = ""
+  if (!val) { errEl.textContent = "Sayı girin."; return }
+  const nums = val.split(",").map(n => parseInt(n.trim())).filter(n => !isNaN(n))
   if (nums.length === 0 || nums.length > 3) {
     errEl.textContent = "1 ile 3 arasında sayı girin."
-    errEl.style.display = "block"
     return
   }
-
   socket.emit("move", nums)
-  document.getElementById("moveInput").value = ""
+  input.value = ""
 }
 
-document.getElementById("moveInput").addEventListener("keydown", e => {
-  if (e.key === "Enter") sendMove()
+document.addEventListener("keydown", e => {
+  if (e.key === "Enter") {
+    if (document.activeElement === document.getElementById("chatInput")) sendChat()
+    else sendMove()
+  }
 })
 </script>
-
 </body>
 </html>
