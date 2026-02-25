@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eleven — Açık Partiler</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style> body { font-family: 'Inter', sans-serif; } </style>
+</head>
+<body class="bg-zinc-950 text-zinc-100 min-h-screen px-4 py-10">
+
+  <div class="max-w-xl mx-auto">
+
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-2xl font-semibold">Açık partiler</h1>
+        <p class="text-zinc-500 text-sm mt-0.5">Katılmak için bir isim yaz ve tıkla</p>
+      </div>
+      <a href="/" class="text-zinc-500 text-sm hover:text-zinc-300 transition-colors">← geri</a>
+    </div>
+
+    <!-- İsim input -->
+    <div class="mb-6">
+      <input id="playerName" type="text" maxlength="20" placeholder="önce isminizi girin..."
+        class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 outline-none focus:border-zinc-500">
+    </div>
+
+    <!-- Liste -->
+    <div id="roomList" class="flex flex-col gap-3"></div>
+    <p id="emptyMsg" class="hidden text-center text-zinc-600 text-sm mt-10">Şu an açık parti yok.</p>
+    <p id="loadingMsg" class="text-center text-zinc-600 text-sm mt-10">Yükleniyor...</p>
+
+  </div>
+
+  <!-- Error toast -->
+  <div id="toast" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-red-500/10 border border-red-500/30 text-red-400 text-sm px-4 py-2.5 rounded-lg">
+  </div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const socket = io()
+
+function showToast(msg) {
+  const t = document.getElementById("toast")
+  t.textContent = msg
+  t.classList.remove("hidden")
+  setTimeout(() => t.classList.add("hidden"), 3000)
+}
+
+async function loadRooms() {
+  try {
+    const res = await fetch("/api/rooms")
+    const rooms = await res.json()
+
+    document.getElementById("loadingMsg").classList.add("hidden")
+    const list = document.getElementById("roomList")
+    list.innerHTML = ""
+
+    if (rooms.length === 0) {
+      document.getElementById("emptyMsg").classList.remove("hidden")
+      return
+    }
+
+    document.getElementById("emptyMsg").classList.add("hidden")
+
+    rooms.forEach(room => {
+      const div = document.createElement("div")
+      div.className = "bg-zinc-900 border border-zinc-800 rounded-xl px-5 py-4 flex items-center justify-between hover:border-zinc-600 transition-colors cursor-pointer"
+      div.innerHTML = `
+        <div>
+          <div class="font-medium text-sm">${room.host}'in partisi</div>
+          <div class="text-zinc-500 text-xs mt-0.5">${room.players} / ${room.maxPlayers} oyuncu · kod: <span class="font-mono">${room.code}</span></div>
+        </div>
+        <button class="bg-zinc-700 hover:bg-zinc-600 text-zinc-100 font-medium text-xs rounded-lg px-4 py-2 transition-colors ml-4">
+          Katıl
+        </button>
+      `
+      div.addEventListener("click", () => joinRoom(room.code))
+      list.appendChild(div)
+    })
+  } catch (e) {
+    document.getElementById("loadingMsg").textContent = "Yüklenemedi."
+  }
+}
+
+function joinRoom(code) {
+  const name = document.getElementById("playerName").value.trim()
+  if (!name) { showToast("Önce isminizi girin."); return }
+  localStorage.setItem("playerName", name)
+  socket.emit("joinRoom", { name, code })
+}
+
+socket.on("updateRoom", () => {
+  const name = document.getElementById("playerName").value.trim()
+  const urlParams = new URLSearchParams(window.location.search)
+  const code = urlParams.get("joining")
+  // We navigate after joinRoom emits updateRoom — get code from last attempted
+  if (window._joiningCode) {
+    window.location = `/game.html?room=${window._joiningCode}&name=${encodeURIComponent(name)}`
+  }
+})
+
+// Patch joinRoom to store code
+const origJoin = joinRoom
+window.joinRoom = function(code) {
+  const name = document.getElementById("playerName").value.trim()
+  if (!name) { showToast("Önce isminizi girin."); return }
+  window._joiningCode = code
+  localStorage.setItem("playerName", name)
+  socket.emit("joinRoom", { name, code })
+}
+
+socket.on("errorMessage", msg => showToast(msg))
+
+// Load on start and refresh every 5s
+loadRooms()
+setInterval(loadRooms, 5000)
+</script>
+</body>
+</html>

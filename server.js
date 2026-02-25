@@ -42,7 +42,7 @@ function eliminateCurrentPlayer(code) {
   io.to(code).emit("playerEliminated", { name: eliminated })
 
   if (room.players.length <= 1) {
-    room.started = false  // FIX 4: set started=false on game over
+    room.started = false
     const winner = room.players[0] || null
     io.to(code).emit("gameOver", { winner })
     console.log(`[${code}] Game over. Winner: ${winner}`)
@@ -56,32 +56,39 @@ function eliminateCurrentPlayer(code) {
   broadcast(code)
 }
 
+// Public rooms list endpoint
+app.get("/api/rooms", (req, res) => {
+  const publicRooms = Object.entries(rooms)
+    .filter(([, r]) => r.isPublic && !r.started)
+    .map(([code, r]) => ({
+      code,
+      host: r.host,
+      players: r.players.length,
+      maxPlayers: r.rows * r.cols,
+    }))
+  res.json(publicRooms)
+})
+
 io.on("connection", (socket) => {
   console.log(`[+] Connected: ${socket.id}`)
 
   socket.on("createRoom", (payload = {}) => {
     try {
-      let { name, rows, cols } = payload
+      let { name, rows, cols, visibility } = payload
       if (!name || typeof name !== "string" || name.trim() === "")
         return safeEmit(socket, "errorMessage", "Geçersiz isim")
       name = name.trim()
-
-      // FIX 5: minimum 2 players required, so enforce cols*rows >= 2
       if (!isValidInt(rows, 1, 20) || !isValidInt(cols, 1, 20))
         return safeEmit(socket, "errorMessage", "Geçersiz sınıf boyutu")
       rows = Number(rows)
       cols = Number(cols)
-      if (rows * cols < 2)
-        return safeEmit(socket, "errorMessage", "Oda en az 2 kişilik olmalı")
-
+      const isPublic = visibility !== "private"
       const code = Math.random().toString(36).substring(2, 7).toUpperCase()
       rooms[code] = {
         players: [name], eliminated: [],
         currentNumber: 0, currentPlayerIndex: 0,
         started: false, host: name, rows, cols,
-        // FIX 1: track socket IDs per player name to detect duplicates
-        socketIds: { [name]: socket.id },
-        _deleteTimer: null,
+        isPublic, _deleteTimer: null,
       }
       socket.join(code)
       socket.roomCode = code
@@ -104,29 +111,18 @@ io.on("connection", (socket) => {
       if (!rooms[code])
         return safeEmit(socket, "errorMessage", "Oda bulunamadı")
       const room = rooms[code]
-
       if (room._deleteTimer) {
         clearTimeout(room._deleteTimer)
         room._deleteTimer = null
         console.log(`[${code}] Deletion cancelled`)
       }
-
       if (room.started && !room.players.includes(name) && !room.eliminated.includes(name))
         return safeEmit(socket, "errorMessage", "Oyun zaten başladı")
-
-      // FIX 1: reject if name is taken by a different socket
-      if (room.players.includes(name) && room.socketIds[name] !== socket.id)
-        return safeEmit(socket, "errorMessage", "Bu isim zaten kullanımda")
-
       if (!room.players.includes(name)) {
         if (room.players.length >= room.rows * room.cols)
           return safeEmit(socket, "errorMessage", "Oda dolu")
         room.players.push(name)
       }
-
-      // Update socket ID mapping for this player
-      room.socketIds[name] = socket.id
-
       socket.join(code)
       socket.roomCode = code
       socket.playerName = name
@@ -163,20 +159,14 @@ io.on("connection", (socket) => {
       if (room.players[room.currentPlayerIndex] !== socket.playerName) return
       if (!Array.isArray(numbers)) return
       if (numbers.length === 0 || numbers.length > 3) return
-
       const current = room.currentNumber
-
-      // FIX 3: validate sequence first, then bounds — cleaner order
       for (let i = 0; i < numbers.length; i++) {
         if (typeof numbers[i] !== "number" || !Number.isInteger(numbers[i])) return
         if (numbers[i] !== current + i + 1) return
+        if (numbers[i] >= 11) return
       }
-
       const last = numbers[numbers.length - 1]
-      if (last > 10) return  // FIX 3: bounds check after sequence validation
-
       room.currentNumber = last
-
       if (last === 10) {
         room.currentPlayerIndex = (room.currentPlayerIndex + 1) % room.players.length
         console.log(`[${code}] ${socket.playerName} said 10 — ${room.players[room.currentPlayerIndex]} is forced out`)
@@ -188,6 +178,7 @@ io.on("connection", (socket) => {
     } catch (err) { console.error("move error:", err) }
   })
 
+
   socket.on("disconnect", () => {
     try {
       const code = socket.roomCode
@@ -197,27 +188,12 @@ io.on("connection", (socket) => {
         return
       }
       const room = rooms[code]
-
-      // FIX 1: ignore disconnect if this socket is no longer the owner of that name
-      if (room.socketIds[name] !== socket.id) {
-        console.log(`[-] Stale disconnect ignored: ${socket.id} ${name}`)
-        return
-      }
-
       if (!room.players.includes(name)) {
         console.log(`[-] Disconnected (not in players): ${socket.id} ${name}`)
         return
       }
-
-      // FIX 1 + 2: remove from both players and socketIds
       room.players = room.players.filter((p) => p !== name)
-      delete room.socketIds[name]
-
-      // FIX 2: also clean up from eliminated if present (edge case on reconnect)
-      room.eliminated = room.eliminated.filter((p) => p !== name)
-
       console.log(`[-] Disconnected: ${name} | Room: ${code} | Left: ${room.players.length}`)
-
       if (room.players.length === 0) {
         room._deleteTimer = setTimeout(() => {
           if (rooms[code] && rooms[code].players.length === 0) {
@@ -234,7 +210,6 @@ io.on("connection", (socket) => {
           room.currentPlayerIndex = 0
         }
         if (room.started && room.players.length < 2) {
-          // FIX 4: always set started=false before emitting gameOver
           room.started = false
           room.currentNumber = 0
           room.currentPlayerIndex = 0

@@ -3,82 +3,106 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>eleven</title>
+<title>Eleven</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<style>* { font-family: 'Inter', sans-serif; }</style>
+<style> body { font-family: 'Inter', sans-serif; } </style>
 </head>
-<body class="bg-neutral-950 text-neutral-100 min-h-screen flex flex-col items-center justify-center p-6">
+<body class="bg-zinc-950 text-zinc-100 min-h-screen flex flex-col items-center justify-center px-4 py-12">
 
   <div class="mb-10 text-center">
-    <p class="text-3xl font-semibold text-white tracking-tight mb-1">eleven</p>
-    <p class="text-neutral-500 text-sm">sayı oyunu</p>
+    <h1 class="text-3xl font-semibold tracking-tight mb-1">Eleven</h1>
+    <p class="text-zinc-500 text-sm">sayı oyunu</p>
   </div>
 
-  <div class="w-full max-w-2xl">
-    <div class="flex flex-col md:flex-row gap-4 items-stretch">
+  <div class="flex flex-col md:flex-row gap-6 w-full max-w-2xl items-start">
 
-      <!-- Create -->
-      <div class="flex-1 bg-neutral-900 border border-neutral-800 rounded-2xl p-6 flex flex-col">
-        <p class="text-xs text-neutral-500 uppercase tracking-widest mb-5">parti oluştur</p>
-        <div class="flex flex-col gap-4 flex-1">
-          <div class="flex flex-col gap-1.5">
-            <label class="text-xs text-neutral-400">isim</label>
-            <input id="name" type="text" maxlength="20" placeholder="adınız"
-              class="bg-neutral-800 border border-neutral-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-neutral-600 outline-none focus:border-neutral-500 transition-colors">
-          </div>
-          <div class="flex flex-col gap-1.5">
-            <label class="text-xs text-neutral-400">sınıf boyutu</label>
-            <select id="gridSize"
-              class="bg-neutral-800 border border-neutral-700 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-neutral-500 transition-colors cursor-pointer">
-              <option value="5x4">5 × 4 — 20 kişi</option>
-              <option value="5x5">5 × 5 — 25 kişi</option>
-              <option value="4x4">4 × 4 — 16 kişi</option>
-              <option value="6x5">6 × 5 — 30 kişi</option>
-            </select>
-          </div>
-          <button onclick="createRoom()"
-            class="mt-auto bg-white text-neutral-950 font-medium text-sm rounded-xl py-2.5 hover:bg-neutral-200 transition-colors cursor-pointer">
-            oluştur
-          </button>
-        </div>
+    <!-- Oluştur -->
+    <div class="flex-1 bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+      <h2 class="text-xs text-zinc-500 mb-5">Oluştur</h2>
+
+      <label class="block text-xs text-zinc-400 mb-1">İsim</label>
+      <input id="name" type="text" maxlength="20" placeholder="adınız..."
+        class="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600 outline-none focus:border-zinc-500 mb-4">
+
+      <label class="block text-xs text-zinc-400 mb-1">Sınıf boyutu</label>
+      <select id="gridSize"
+        class="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-100 outline-none focus:border-zinc-500 mb-4">
+        <option value="5x4">5 × 4 — 20 kişi</option>
+        <option value="5x5">5 × 5 — 25 kişi</option>
+        <option value="4x4">4 × 4 — 16 kişi</option>
+        <option value="6x5">6 × 5 — 30 kişi</option>
+      </select>
+
+      <label class="block text-xs text-zinc-400 mb-1">Görünürlük</label>
+      <div class="flex gap-2 mb-5">
+        <button id="btnPublic" onclick="setVisibility('public')"
+          class="flex-1 text-sm py-2 rounded-lg border border-zinc-500 bg-zinc-700 text-zinc-100 transition-colors">
+          Herkese açık
+        </button>
+        <button id="btnPrivate" onclick="setVisibility('private')"
+          class="flex-1 text-sm py-2 rounded-lg border border-zinc-800 bg-zinc-900 text-zinc-500 transition-colors">
+          Gizli
+        </button>
       </div>
 
-      <!-- Divider -->
-      <div class="flex md:flex-col items-center gap-2 md:gap-3 py-2 md:py-6">
-        <div class="flex-1 h-px md:h-full md:w-px bg-neutral-800"></div>
-        <span class="text-neutral-600 text-xs shrink-0">ya da</span>
-        <div class="flex-1 h-px md:h-full md:w-px bg-neutral-800"></div>
-      </div>
-
-      <!-- Join -->
-      <div class="flex-1 bg-neutral-900 border border-neutral-800 rounded-2xl p-6 flex flex-col">
-        <p class="text-xs text-neutral-500 uppercase tracking-widest mb-5">partiye katıl</p>
-        <div class="flex flex-col gap-4 flex-1">
-          <div class="flex flex-col gap-1.5">
-            <label class="text-xs text-neutral-400">isim</label>
-            <input id="nameJoin" type="text" maxlength="20" placeholder="adınız"
-              class="bg-neutral-800 border border-neutral-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-neutral-600 outline-none focus:border-neutral-500 transition-colors">
-          </div>
-          <div class="flex flex-col gap-1.5">
-            <label class="text-xs text-neutral-400">parti kodu</label>
-            <input id="code" type="text" maxlength="10" placeholder="xxxxx" autocomplete="off"
-              class="bg-neutral-800 border border-neutral-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-neutral-600 outline-none focus:border-neutral-500 transition-colors uppercase tracking-widest">
-          </div>
-          <button onclick="joinRoom()"
-            class="mt-auto bg-neutral-800 border border-neutral-700 text-white font-medium text-sm rounded-xl py-2.5 hover:bg-neutral-700 transition-colors cursor-pointer">
-            katıl
-          </button>
-        </div>
-      </div>
-
+      <button onclick="createRoom()"
+        class="w-full bg-white text-zinc-950 font-medium text-sm rounded-lg py-2.5 hover:bg-zinc-200 transition-colors">
+        Parti oluştur
+      </button>
     </div>
-    <p id="errorMsg" class="hidden text-red-400 text-sm text-center mt-4"></p>
+
+    <!-- Ayraç -->
+    <div class="flex md:flex-col items-center gap-2 text-zinc-700 text-xs self-center">
+      <div class="w-10 h-px md:w-px md:h-10 bg-zinc-800"></div>
+      ya da
+      <div class="w-10 h-px md:w-px md:h-10 bg-zinc-800"></div>
+    </div>
+
+    <!-- Katıl -->
+    <div class="flex-1 bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+      <h2 class="text-xs text-zinc-500 mb-5">Katıl</h2>
+
+      <label class="block text-xs text-zinc-400 mb-1">İsim</label>
+      <input id="nameJoin" type="text" maxlength="20" placeholder="adınız..."
+        class="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600 outline-none focus:border-zinc-500 mb-4">
+
+      <label class="block text-xs text-zinc-400 mb-1">Parti kodu</label>
+      <input id="code" type="text" maxlength="10" placeholder="xxxxx" autocomplete="off"
+        class="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600 outline-none focus:border-zinc-500 mb-5 uppercase tracking-widest">
+
+      <button onclick="joinRoom()"
+        class="w-full bg-zinc-700 text-zinc-100 font-medium text-sm rounded-lg py-2.5 hover:bg-zinc-600 transition-colors mb-3">
+        Katıl
+      </button>
+
+      <a href="/pages.html"
+        class="block w-full text-center text-zinc-500 text-sm py-2 rounded-lg border border-zinc-800 hover:border-zinc-600 hover:text-zinc-300 transition-colors">
+        Açık partileri gör
+      </a>
+    </div>
+
   </div>
+
+  <p id="errorMsg" class="hidden mt-5 text-red-400 text-sm text-center"></p>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
 const socket = io()
+let visibility = "public"
+
+function setVisibility(val) {
+  visibility = val
+  const pub = document.getElementById("btnPublic")
+  const priv = document.getElementById("btnPrivate")
+  if (val === "public") {
+    pub.className = "flex-1 text-sm py-2 rounded-lg border border-zinc-500 bg-zinc-700 text-zinc-100 transition-colors"
+    priv.className = "flex-1 text-sm py-2 rounded-lg border border-zinc-800 bg-zinc-900 text-zinc-500 transition-colors"
+  } else {
+    priv.className = "flex-1 text-sm py-2 rounded-lg border border-zinc-500 bg-zinc-700 text-zinc-100 transition-colors"
+    pub.className = "flex-1 text-sm py-2 rounded-lg border border-zinc-800 bg-zinc-900 text-zinc-500 transition-colors"
+  }
+}
 
 function showError(msg) {
   const el = document.getElementById("errorMsg")
@@ -92,19 +116,19 @@ function clearError() {
 function createRoom() {
   clearError()
   const name = document.getElementById("name").value.trim()
-  if (!name) return showError("isim boş olamaz")
+  if (!name) return showError("İsim boş olamaz.")
   const grid = document.getElementById("gridSize").value
   const [cols, rows] = grid.split("x").map(Number)
   localStorage.setItem("playerName", name)
-  socket.emit("createRoom", { name, rows, cols })
+  socket.emit("createRoom", { name, rows, cols, visibility })
 }
 
 function joinRoom() {
   clearError()
   const name = document.getElementById("nameJoin").value.trim()
   const code = document.getElementById("code").value.trim().toUpperCase()
-  if (!name) return showError("isim boş olamaz")
-  if (!code) return showError("parti kodu boş olamaz")
+  if (!name) return showError("İsim boş olamaz.")
+  if (!code) return showError("Parti kodu boş olamaz.")
   localStorage.setItem("playerName", name)
   socket.emit("joinRoom", { name, code })
 }
