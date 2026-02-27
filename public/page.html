@@ -97,7 +97,7 @@ socket.on("updateRoom", () => {
   const code = urlParams.get("joining")
   // We navigate after joinRoom emits updateRoom — get code from last attempted
   if (window._joiningCode) {
-    window.location = `/game.html?room=${window._joiningCode}&name=${encodeURIComponent(name)}`
+    window.location = `/page.html?room=${window._joiningCode}&name=${encodeURIComponent(name)}`
   }
 })
 

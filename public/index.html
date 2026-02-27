@@ -246,12 +246,12 @@ function joinRoom() {
 
 socket.on("roomCreated", code => {
   const name = document.getElementById("name").value.trim()
-  window.location = `/page.html?room=${code}&name=${encodeURIComponent(name)}`
+  window.location = `/game?room=${code}&name=${encodeURIComponent(name)}`
 })
 socket.on("updateRoom", () => {
   const name = document.getElementById("nameJoin").value.trim()
   const code = document.getElementById("code").value.trim().toUpperCase()
-  if (code) window.location = `/page.html?room=${code}&name=${encodeURIComponent(name)}`
+  if (code) window.location = `/game?room=${code}&name=${encodeURIComponent(name)}`
 })
 socket.on("errorMessage", msg => showError(msg))
 

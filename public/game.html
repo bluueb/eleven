@@ -6,72 +6,177 @@
 <title>eleven</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/nes.css/css/nes.min.css" rel="stylesheet" id="nesCss" disabled>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
-  * { font-family: 'Inter', sans-serif; }
-  .desk { transition: all 0.15s ease; }
+  body.classic * { font-family: 'Inter', sans-serif; }
+  body.retro * { font-family: 'Press Start 2P', monospace; font-size: 10px; }
+
+  /* Classic */
+  body.classic { background: #0a0a0a; color: #f5f5f5; }
+  body.classic .card { background: #171717; border: 1px solid #262626; border-radius: 16px; padding: 24px; }
+  body.classic input {
+    background: #262626; border: 1px solid #404040; border-radius: 12px;
+    padding: 10px 16px; font-size: 14px; color: #fff; outline: none; width: 100%;
+    transition: border-color 0.15s; box-sizing: border-box;
+  }
+  body.classic input:focus { border-color: #737373; }
+  body.classic .btn-primary {
+    background: #fff; color: #0a0a0a; border: none; border-radius: 12px;
+    padding: 10px 20px; font-size: 14px; font-weight: 500; cursor: pointer;
+    transition: background 0.15s;
+  }
+  body.classic .btn-primary:hover { background: #e5e5e5; }
+  body.classic .btn-secondary {
+    background: #262626; color: #fff; border: 1px solid #404040; border-radius: 12px;
+    padding: 10px 20px; font-size: 14px; font-weight: 500; cursor: pointer;
+    transition: background 0.15s;
+  }
+  body.classic .btn-secondary:hover { background: #333; }
+  body.classic .icon-btn { background: none; border: none; color: #525252; cursor: pointer; padding: 6px; border-radius: 8px; transition: color 0.15s, background 0.15s; display: flex; align-items: center; }
+  body.classic .icon-btn:hover { color: #fff; background: #262626; }
+  body.classic .muted { color: #525252; }
+  body.classic .semi { color: #737373; }
+  body.classic .modal { background: #171717; border: 1px solid #262626; border-radius: 20px; padding: 24px; width: 100%; max-width: 320px; }
+  body.classic .theme-btn { border: 1px solid #404040; border-radius: 10px; padding: 10px 16px; cursor: pointer; background: #262626; color: #fff; font-size: 13px; transition: all 0.15s; flex: 1; }
+  body.classic .theme-btn:hover { border-color: #737373; }
+  body.classic .theme-btn.active { border-color: #fff; background: #333; }
+  body.classic .desk-base { background: #171717; border: 1px solid #262626; border-radius: 12px; transition: all 0.15s; }
+  body.classic .desk-active-turn { border-color: rgba(255,255,255,0.3) !important; background: rgba(255,255,255,0.04) !important; }
+  body.classic .desk-me { border-color: #737373 !important; }
+  body.classic .banner-my-turn { border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.04); color: #fff; border-radius: 12px; }
+  body.classic .banner-waiting { border: 1px solid #262626; color: #525252; border-radius: 12px; }
+  body.classic .divider-line { background: #262626; }
+  body.classic .player-li { border-bottom: 1px solid #262626; }
+
+  /* Retro */
+  body.retro { background: #212529; color: #fff; }
+  body.retro .icon-btn { background: none; border: none; color: #aaa; cursor: pointer; padding: 6px; display: flex; align-items: center; }
+  body.retro .muted { color: #888; }
+  body.retro .semi { color: #aaa; }
+  body.retro .modal { background: #212529; border: 4px solid #fff; padding: 24px; width: 100%; max-width: 320px; }
+  body.retro .theme-btn { border: 4px solid #555; padding: 8px 12px; cursor: pointer; background: #333; color: #fff; font-size: 8px; transition: all 0.15s; font-family: 'Press Start 2P', monospace; flex: 1; }
+  body.retro .theme-btn.active { border-color: #92cc41; }
+  body.retro .desk-base { border: 4px solid #555; padding: 4px; }
+  body.retro .desk-active-turn { border-color: #92cc41 !important; }
+  body.retro .desk-me { border-color: #209cee !important; }
+  body.retro .banner-my-turn { border: 4px solid #92cc41; color: #92cc41; padding: 8px; }
+  body.retro .banner-waiting { border: 4px solid #555; color: #888; padding: 8px; }
+  body.retro .divider-line { background: #444; }
+  body.retro .player-li { border-bottom: 2px solid #333; }
 </style>
 </head>
-<body class="bg-neutral-950 text-neutral-100 min-h-screen p-4 pb-16">
+<body class="classic min-h-screen p-4 pb-16">
 
   <!-- Overlay -->
   <div id="overlay" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
-    <div id="overlayBox" class="bg-neutral-900 border border-neutral-800 rounded-2xl p-8 w-full max-w-sm text-center"></div>
+    <div id="overlayBox" class="modal"></div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div id="settingsModal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
+    <div class="modal">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <span style="font-weight:600;">ayarlar</span>
+        <button class="icon-btn" onclick="closeSettings()">
+          <i data-lucide="x" style="width:16px;height:16px;"></i>
+        </button>
+      </div>
+      <p style="font-size:11px; color:#737373; margin-bottom:8px;">tema</p>
+      <div style="display:flex; gap:8px;">
+        <button class="theme-btn" id="btnClassic" onclick="setTheme('classic')">klasik</button>
+        <button class="theme-btn" id="btnRetro" onclick="setTheme('retro')">retro</button>
+      </div>
+    </div>
   </div>
 
   <!-- Header -->
-  <header class="flex justify-between items-center mb-6 max-w-5xl mx-auto">
-    <span class="text-lg font-semibold text-white">eleven</span>
-    <div class="flex items-center gap-5">
-      <div id="gameStats" class="hidden flex items-center gap-5">
-        <span class="text-neutral-500 text-sm">sayaç: <span id="numberDisplay" class="text-white font-medium">0</span></span>
-        <span class="text-neutral-500 text-sm">kalan: <span id="aliveCount" class="text-white font-medium">—</span></span>
+  <header style="display:flex; justify-content:space-between; align-items:center; max-width:900px; margin:0 auto 24px; width:100%;">
+    <a href="/" style="display:flex; align-items:center; gap:6px; text-decoration:none; color:inherit;">
+      <button class="icon-btn" style="padding:4px;">
+        <i data-lucide="arrow-left" style="width:18px;height:18px;"></i>
+      </button>
+      <span style="font-weight:600;">eleven</span>
+    </a>
+    <div style="display:flex; align-items:center; gap:16px;">
+      <div id="gameStats" style="display:none; gap:16px; align-items:center;">
+        <span class="semi" style="font-size:13px;">sayaç: <span id="numberDisplay" style="color:#fff; font-weight:500;">0</span></span>
+        <span class="semi" style="font-size:13px;">kalan: <span id="aliveCount" style="color:#fff; font-weight:500;">—</span></span>
       </div>
-      <span class="text-neutral-500 text-sm font-mono">kod: <span id="roomCode" class="text-neutral-300"></span></span>
+      <span class="muted" style="font-size:13px; font-family:monospace;">kod: <span id="roomCode" style="color:#a3a3a3;"></span></span>
+      <button class="icon-btn" onclick="openSettings()">
+        <i data-lucide="settings" style="width:18px;height:18px;"></i>
+      </button>
     </div>
   </header>
 
-  <div class="max-w-5xl mx-auto">
+  <div style="max-width:900px; margin:0 auto;">
 
     <!-- Lobby -->
-    <div id="lobby" class="hidden max-w-sm mx-auto">
-      <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-6">
-        <p class="text-xs text-neutral-500 uppercase tracking-widest mb-4">oyuncular</p>
-        <ul id="playerList" class="mb-5 divide-y divide-neutral-800"></ul>
-        <p id="waitMsg" class="hidden text-neutral-500 text-sm text-center mb-4">host oyunu başlatmasını bekliyor...</p>
-        <button id="startBtn" class="hidden w-full bg-white text-neutral-950 font-medium text-sm rounded-xl py-2.5 hover:bg-neutral-200 transition-colors cursor-pointer" onclick="startGame()">
-          oyunu başlat
-        </button>
+    <div id="lobby" style="display:none; max-width:360px; margin:0 auto;">
+      <div class="card">
+        <p style="font-size:11px; color:#525252; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:16px;">oyuncular</p>
+        <ul id="playerList" style="list-style:none; padding:0; margin:0 0 16px;"></ul>
+        <p id="waitMsg" style="display:none; font-size:12px; color:#525252; text-align:center; margin-bottom:12px;">host oyunu başlatmasını bekliyor...</p>
+        <button id="startBtn" class="btn-primary" style="display:none; width:100%;" onclick="startGame()">oyunu başlat</button>
       </div>
     </div>
 
     <!-- Game -->
-    <div id="game" class="hidden">
+    <div id="game" style="display:none;">
 
       <!-- Turn banner -->
-      <div id="turnBanner" class="text-center py-3 px-4 rounded-xl border border-neutral-800 text-neutral-500 text-sm mb-3 transition-all"></div>
+      <div id="turnBanner" class="banner-waiting" style="text-align:center; padding:12px 16px; margin-bottom:12px; font-size:13px;"></div>
 
       <!-- Move input -->
-      <div class="flex gap-2 mb-1">
+      <div style="display:flex; gap:8px; margin-bottom:4px;">
         <input id="moveInput" type="text" placeholder="1  veya  1,2  veya  1,2,3" autocomplete="off"
-          class="flex-1 bg-neutral-900 border border-neutral-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-neutral-600 outline-none focus:border-neutral-500 transition-colors">
-        <button onclick="sendMove()"
-          class="bg-neutral-800 border border-neutral-700 hover:bg-neutral-700 text-white font-medium text-sm rounded-xl px-5 py-2.5 transition-colors cursor-pointer">
-          gönder
-        </button>
+          style="flex:1;">
+        <button class="btn-secondary" onclick="sendMove()">gönder</button>
       </div>
-      <p id="moveError" class="text-red-400 text-xs min-h-4 mb-3 pl-1"></p>
+      <p id="moveError" style="color:#f87171; font-size:11px; min-height:16px; margin-bottom:12px; padding-left:4px;"></p>
 
       <!-- Feed -->
-      <div id="feed" class="text-center mb-4 min-h-5 space-y-0.5"></div>
+      <div id="feed" style="text-align:center; margin-bottom:12px; min-height:16px;"></div>
 
       <!-- Grid -->
-      <div id="grid" class="flex flex-col gap-2 items-center"></div>
+      <div id="grid" style="display:flex; flex-direction:column; gap:8px; align-items:center;"></div>
 
     </div>
   </div>
 
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script>
+lucide.createIcons()
+
+// Theme
+function getTheme() { return localStorage.getItem("theme") || "classic" }
+function setTheme(t) {
+  localStorage.setItem("theme", t)
+  applyTheme(t)
+  updateThemeBtns(t)
+}
+function applyTheme(t) {
+  document.body.className = t + " min-h-screen p-4 pb-16"
+  document.getElementById("nesCss").disabled = (t !== "retro")
+  lucide.createIcons()
+}
+function updateThemeBtns(t) {
+  document.getElementById("btnClassic").classList.toggle("active", t === "classic")
+  document.getElementById("btnRetro").classList.toggle("active", t === "retro")
+}
+function openSettings() {
+  updateThemeBtns(getTheme())
+  document.getElementById("settingsModal").classList.remove("hidden")
+}
+function closeSettings() {
+  document.getElementById("settingsModal").classList.add("hidden")
+}
+
+applyTheme(getTheme())
+
+// Socket
 const socket = io()
 const params = new URLSearchParams(window.location.search)
 const roomCode = params.get("room")
@@ -89,12 +194,11 @@ function hideOverlay() {
 
 if (!playerName) {
   showOverlay(`
-    <p class="text-white font-medium mb-1">hoş geldin</p>
-    <p class="text-neutral-400 text-sm mb-4">adınız ne?</p>
-    <input id="nameInput" type="text" placeholder="isminiz" maxlength="20"
-      class="w-full bg-neutral-800 border border-neutral-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-neutral-600 outline-none focus:border-neutral-500 mb-2">
-    <p id="overlayErr" class="text-red-400 text-xs min-h-4 mb-3 text-left"></p>
-    <button onclick="saveName()" class="w-full bg-white text-neutral-950 font-medium text-sm rounded-xl py-2.5 hover:bg-neutral-200 transition-colors cursor-pointer">devam</button>
+    <p style="font-weight:600; margin-bottom:4px;">hoş geldin</p>
+    <p style="font-size:12px; color:#737373; margin-bottom:16px;">adınız ne?</p>
+    <input id="nameInput" type="text" placeholder="isminiz" maxlength="20" style="margin-bottom:8px;">
+    <p id="overlayErr" style="color:#f87171; font-size:11px; min-height:14px; margin-bottom:12px;"></p>
+    <button class="btn-primary" style="width:100%;" onclick="saveName()">devam</button>
   `)
 } else {
   joinRoom()
@@ -115,9 +219,9 @@ function joinRoom() {
 
 socket.on("errorMessage", msg => {
   showOverlay(`
-    <p class="text-white font-medium mb-1">hata</p>
-    <p class="text-neutral-400 text-sm mb-5">${msg}</p>
-    <button onclick="window.location='/'" class="w-full bg-neutral-800 border border-neutral-700 hover:bg-neutral-700 text-white font-medium text-sm rounded-xl py-2.5 transition-colors cursor-pointer">geri dön</button>
+    <p style="font-weight:600; margin-bottom:4px;">hata</p>
+    <p style="font-size:12px; color:#737373; margin-bottom:16px;">${msg}</p>
+    <button class="btn-secondary" style="width:100%;" onclick="window.location='/'">geri dön</button>
   `)
 })
 
@@ -132,42 +236,38 @@ socket.on("gameOver", ({ winner, reason }) => {
     ? (isMe ? "rakip ayrıldı." : `rakip ayrıldı. kazanan: ${winner}`)
     : (isMe ? "tebrikler!" : `kazanan: ${winner}`)
   showOverlay(`
-    <p class="text-4xl mb-3">${emoji}</p>
-    <p class="text-white font-medium mb-1">${title}</p>
-    <p class="text-neutral-400 text-sm mb-6">${sub}</p>
-    <div class="flex gap-2">
-      <button onclick="location.reload()" class="flex-1 bg-white text-neutral-950 font-medium text-sm rounded-xl py-2.5 hover:bg-neutral-200 transition-colors cursor-pointer">tekrar</button>
-      <button onclick="window.location='/'" class="flex-1 bg-neutral-800 border border-neutral-700 hover:bg-neutral-700 text-white font-medium text-sm rounded-xl py-2.5 transition-colors cursor-pointer">çıkış</button>
+    <p style="font-size:36px; margin-bottom:8px;">${emoji}</p>
+    <p style="font-weight:600; margin-bottom:4px;">${title}</p>
+    <p style="font-size:12px; color:#737373; margin-bottom:20px;">${sub}</p>
+    <div style="display:flex; gap:8px;">
+      <button class="btn-primary" style="flex:1;" onclick="location.reload()">tekrar</button>
+      <button class="btn-secondary" style="flex:1;" onclick="window.location='/'">çıkış</button>
     </div>
   `)
 })
 
 function render(data) {
   if (data.started) {
-    document.getElementById("lobby").classList.add("hidden")
-    document.getElementById("game").classList.remove("hidden")
-    document.getElementById("gameStats").classList.remove("hidden")
+    document.getElementById("lobby").style.display = "none"
+    document.getElementById("game").style.display = "block"
+    document.getElementById("gameStats").style.display = "flex"
   } else {
-    document.getElementById("lobby").classList.remove("hidden")
-    document.getElementById("game").classList.add("hidden")
+    document.getElementById("lobby").style.display = "block"
+    document.getElementById("game").style.display = "none"
+    document.getElementById("gameStats").style.display = "none"
 
     const list = document.getElementById("playerList")
     list.innerHTML = ""
     data.players.forEach(p => {
       const li = document.createElement("li")
-      li.className = "flex justify-between items-center py-2.5 text-sm"
-      li.innerHTML = `<span class="text-neutral-200">${p}</span>` +
-        (p === data.host ? `<span class="text-xs text-neutral-500">host</span>` : "")
+      li.className = "player-li"
+      li.style.cssText = "display:flex; justify-content:space-between; align-items:center; padding:10px 0; font-size:13px;"
+      li.innerHTML = `<span>${p}</span>` + (p === data.host ? `<span style="font-size:10px; color:#525252;">host</span>` : "")
       list.appendChild(li)
     })
 
-    if (playerName === data.host) {
-      document.getElementById("startBtn").classList.remove("hidden")
-      document.getElementById("waitMsg").classList.add("hidden")
-    } else {
-      document.getElementById("startBtn").classList.add("hidden")
-      document.getElementById("waitMsg").classList.remove("hidden")
-    }
+    document.getElementById("startBtn").style.display = playerName === data.host ? "block" : "none"
+    document.getElementById("waitMsg").style.display = playerName !== data.host ? "block" : "none"
     return
   }
 
@@ -181,12 +281,12 @@ function render(data) {
 
   if (isMyTurn) {
     banner.textContent = "sıra sende"
-    banner.className = "text-center py-3 px-4 rounded-xl border border-white/20 bg-white/5 text-white text-sm mb-3 transition-all"
+    banner.className = "banner-my-turn"
     input.disabled = false
     input.focus()
   } else {
     banner.textContent = `sıra: ${currentPlayer || ""}`
-    banner.className = "text-center py-3 px-4 rounded-xl border border-neutral-800 text-neutral-500 text-sm mb-3 transition-all"
+    banner.className = "banner-waiting"
     input.disabled = true
   }
 
@@ -203,37 +303,31 @@ function render(data) {
   let idx = 0
   for (let r = 0; r < data.rows; r++) {
     const row = document.createElement("div")
-    row.className = "flex gap-2 flex-wrap justify-center"
+    row.style.cssText = "display:flex; gap:8px; flex-wrap:wrap; justify-content:center;"
     for (let c = 0; c < data.cols; c++) {
       const seat = seats[idx]
       const desk = document.createElement("div")
-      desk.className = "desk w-24 h-16 bg-neutral-900 border border-neutral-800 rounded-xl flex items-center justify-center relative"
+      desk.className = "desk-base"
+      desk.style.cssText = "width:96px; height:64px; display:flex; align-items:center; justify-content:center; position:relative;"
 
       const num = document.createElement("div")
-      num.className = "absolute top-1 right-1.5 text-neutral-700 text-xs"
+      num.style.cssText = "position:absolute; top:4px; right:6px; font-size:10px; color:#404040;"
       num.textContent = idx + 1
       desk.appendChild(num)
 
       if (seat) {
         const nameEl = document.createElement("div")
-        nameEl.className = "text-xs text-center px-1 break-all leading-tight"
+        nameEl.style.cssText = "font-size:11px; text-align:center; padding:0 4px; word-break:break-all; line-height:1.3;"
 
         if (seat.state === "out") {
-          desk.classList.add("opacity-20")
-          nameEl.classList.add("line-through", "text-neutral-500")
+          desk.style.opacity = "0.2"
+          nameEl.style.textDecoration = "line-through"
+          nameEl.style.color = "#525252"
           nameEl.textContent = seat.name
         } else {
-          nameEl.classList.add("text-neutral-200")
           nameEl.textContent = seat.name
-
-          if (idx === data.currentPlayerIndex) {
-            desk.classList.remove("border-neutral-800")
-            desk.classList.add("border-white/40", "bg-white/5")
-          }
-          if (seat.name === playerName) {
-            desk.classList.remove("border-neutral-800")
-            desk.classList.add("border-neutral-500")
-          }
+          if (idx === data.currentPlayerIndex) desk.classList.add("desk-active-turn")
+          if (seat.name === playerName) desk.classList.add("desk-me")
         }
         desk.appendChild(nameEl)
       }
@@ -248,7 +342,7 @@ function render(data) {
 function addFeed(msg) {
   const feed = document.getElementById("feed")
   const p = document.createElement("p")
-  p.className = "text-neutral-500 text-xs"
+  p.style.cssText = "font-size:11px; color:#525252; margin:2px 0;"
   p.textContent = msg
   feed.prepend(p)
   while (feed.children.length > 4) feed.removeChild(feed.lastChild)
