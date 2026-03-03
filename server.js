@@ -13,6 +13,19 @@ app.get("/game", (req, res) => {
   res.sendFile(__dirname + "/public/page.html")
 })
 
+// Public rooms list
+app.get("/rooms", (req, res) => {
+  const list = Object.entries(rooms)
+    .filter(([, r]) => !r.started)
+    .map(([code, r]) => ({
+      code,
+      players: r.players.length,
+      max: r.rows * r.cols,
+      host: r.host,
+    }))
+  res.json(list)
+})
+
 let rooms = {}
 
 function safeEmit(socket, event, data) {
