@@ -147,10 +147,9 @@ socket.on('playerEliminated', ({name}) => addFeed('💀 ' + name + i18n[getLang(
 socket.on('gameOver', ({winner, reason}) => {
   const t = i18n[getLang()]; const l = getLang()
   const isMe = winner === playerName
-  const emoji = isMe ? '🏆' : '👾'
   const title = isMe ? {tr:'Kazandın!',en:'You won!',de:'Gewonnen!',es:'¡Ganaste!'}[l] : {tr:'Oyun bitti',en:'Game over',de:'Spiel vorbei',es:'Juego terminado'}[l]
   const sub = reason==='opponent_left' ? {tr:'Rakip ayrıldı.',en:'Opponent left.',de:'Gegner weg.',es:'Rival se fue.'}[l] : `${winner}`
-  showOverlay(`<p style="font-size:40px;margin-bottom:8px;">${emoji}</p><p style="font-size:18px;font-weight:500;margin-bottom:6px;">${title}</p><p style="font-size:13px;color:#aaa;margin-bottom:24px;">${sub}</p><div style="display:flex;gap:8px;"><button class="btn btn-contained" style="flex:1;" onclick="location.reload()">${t.again}</button><button class="btn btn-outlined" style="flex:1;" onclick="window.location='/'">${t.exit}</button></div>`)
+  showOverlay(`<p style="font-size:18px;font-weight:500;margin-bottom:6px;">${title}</p><p style="font-size:13px;color:#aaa;margin-bottom:24px;">${sub}</p><div style="display:flex;gap:8px;"><button class="btn btn-contained" style="flex:1;" onclick="location.reload()">${t.again}</button><button class="btn btn-outlined" style="flex:1;" onclick="window.location='/'">${t.exit}</button></div>`)
 })
 
 function render(data) {
