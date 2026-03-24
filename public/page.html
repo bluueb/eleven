@@ -213,13 +213,21 @@ function sendMove(nums) {
 }
 
 function setMoveBtnsDisabled(disabled) {
-  const current = disabled ? 0 : 1
   const room = window._lastRoomData
   if (!room) return
   const base = room.currentNumber
-  document.getElementById('moveBtn1').disabled = disabled || base + 1 > 10
-  document.getElementById('moveBtn2').disabled = disabled || base + 2 > 10
-  document.getElementById('moveBtn3').disabled = disabled || base + 3 > 10
+
+  const btn1 = document.getElementById('moveBtn1')
+  const btn2 = document.getElementById('moveBtn2')
+  const btn3 = document.getElementById('moveBtn3')
+
+  btn1.textContent = `${base + 1}`
+  btn2.textContent = `${base + 1}, ${base + 2}`
+  btn3.textContent = `${base + 1}, ${base + 2}, ${base + 3}`
+
+  btn1.disabled = disabled || base + 1 > 10
+  btn2.disabled = disabled || base + 2 > 10
+  btn3.disabled = disabled || base + 3 > 10
 }
 
 // Socket error handlers
